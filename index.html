@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prompt Crafter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4f6ff;
+      --card:#ffffff;
+      --text:#121826;
+      --muted:#6b7280;
+      --brand:#4f46e5;        /* button purple */
+      --brand-2:#22c55e;      /* green */
+      --brand-3:#0284c7;      /* blue */
+      --brand-4:#7c3aed;      /* indigo/violet */
+      --brand-5:#f97316;      /* orange (Perplexity) */
+      --ring:rgba(79,70,229,.25);
+      --border:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+    .container{max-width:840px;margin:32px auto;padding:0 20px}
+    .header{
+      display:flex;align-items:center;gap:12px;margin-bottom:18px;
+    }
+    .logo{
+      width:36px;height:36px;border-radius:10px;
+      background: conic-gradient(from 180deg at 50% 50%, #06b6d4, #f59e0b, #ef4444, #06b6d4);
+    }
+    h1{font-size:28px;margin:0}
+    .subtitle{color:var(--muted);font-size:14px;margin:6px 0 0}
+    .card{
+      background:var(--card);border:1px solid var(--border);border-radius:14px;
+      box-shadow:0 1px 1px rgba(0,0,0,.02), 0 6px 24px rgba(0,0,0,.04);
+      padding:18px 18px;
+    }
+    .section-title{font-weight:600;margin:2px 0 10px}
+    textarea, .output{
+      width:100%;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--text);
+      padding:14px 14px;font-size:14px;outline:none;resize:vertical;min-height:110px;
+    }
+    textarea:focus, .output:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+    .btn{
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;display:inline-flex;align-items:center;justify-content:center;
+      gap:8px;padding:12px 16px;border-radius:12px;border:0;cursor:pointer;font-weight:600;color:#fff;
+      transition:.18s transform ease, .18s opacity ease;
+    }
+    .btn:active{transform:translateY(1px)}
+    .btn.convert{background:var(--brand);width:100%;margin:14px 0}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .btn.small{padding:10px 14px;font-size:14px;border-radius:10px}
+    .btn.copy{background:#111827}
+    .btn.claude{background:#111827}
+    .btn.chatgpt{background:var(--brand-3)}
+    .btn.gemini{background:var(--brand-4)}
+    .btn.perplexity{background:var(--brand-5)}
+    .muted{color:var(--muted);font-size:12px;margin-top:10px}
+    .howto li{margin:6px 0}
+    .badge{font-size:12px;color:var(--muted)}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;margin:10px 0 18px;
+    }
+    .api-box{
+      display:flex;gap:8px;align-items:center;
+    }
+    .api-input{
+      width:320px;max-width:60vw;
+      border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;outline:none;
+      background:#fff;
+    }
+    .api-input:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+    .btn.save{background:#10b981}
+    .footer{color:var(--muted);font-size:12px;margin:18px 0}
+    code.inline{background:#f3f4f6;padding:2px 6px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="header">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Prompt Crafter</h1>
+          <div class="subtitle">Transform ideas into structured prompts · Created by Vijay Kumar</div>
+        </div>
+      </div>
+
+      <div class="api-box" title="Optional: store your API key in your browser only">
+        <input id="apiKey" class="api-input" type="password" placeholder="Optional: OpenAI API Key (stored locally)" />
+        <button class="btn small save" id="saveKeyBtn">Save</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Your Requirement</div>
+      <textarea id="requirement" placeholder="Type your requirement here..."></textarea>
+      <button id="convertBtn" class="btn convert">Convert to Prompt</button>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card">
+      <div class="section-title">Generated Prompt</div>
+      <textarea id="output" class="output" placeholder="Your formatted prompt will appear here..." readonly></textarea>
+
+      <div style="height:12px"></div>
+      <div class="row">
+        <button class="btn small copy" id="copyBtn">Copy Prompt</button>
+        <button class="btn small claude" id="claudeBtn">Claude ↗</button>
+        <button class="btn small chatgpt" id="chatgptBtn">ChatGPT ↗</button>
+        <button class="btn small gemini" id="geminiBtn">Gemini ↗</button>
+        <button class="btn small perplexity" id="perplexityBtn">Perplexity ↗</button>
+      </div>
+      <div class="muted">Click a button to copy the prompt and open the AI tool.</div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="card">
+      <div class="section-title">How to Use</div>
+      <ol class="howto">
+        <li>Type your requirement in plain language.</li>
+        <li>Click <b>Convert to Prompt</b> to generate the structured prompt.</li>
+        <li>Review the formatted prompt in the output section.</li>
+        <li>Click <b>Copy</b> or any AI tool button to copy the prompt and open that tool.</li>
+      </ol>
+      <div class="footer">Tip: If you save an API key above, generation uses the model; otherwise it uses the local formatter.</div>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Configuration ----------
+    const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+    const OPENAI_MODEL = "gpt-4o-mini"; // Change to your preferred model
+
+    // Load any saved key
+    const apiKeyInput = document.getElementById('apiKey');
+    const savedKey = localStorage.getItem('OPENAI_API_KEY');
+    if (savedKey) apiKeyInput.value = savedKey;
+
+    document.getElementById('saveKeyBtn').addEventListener('click', () => {
+      localStorage.setItem('OPENAI_API_KEY', apiKeyInput.value.trim());
+      alert('API key saved locally in your browser.');
+    });
+
+    const requirementEl = document.getElementById('requirement');
+    const outputEl = document.getElementById('output');
+    const convertBtn = document.getElementById('convertBtn');
+
+    // Template used if no API key (client-side fallback)
+    function localFormatter(raw) {
+      const clean = (raw || '').trim() || '[No requirement provided]';
+      return [
+`# Role
+You are an expert AI assistant skilled in performing the task described.
+
+# Objective
+${clean}
+
+# Instructions
+- Understand the requirement deeply
+- Break the problem into logical parts
+- Apply best practices of prompt engineering
+- Ask clarifying questions only if absolutely required
+- Maintain accuracy and professionalism
+
+# Output Format
+Describe exactly how the AI should present the final answer.
+
+# Additional Notes
+(Include any optional context if the user provided more details.)`
+      ].join('\n');
+    }
+
+    async function generatePrompt() {
+      const raw = requirementEl.value.trim();
+      if (!raw) {
+        alert('Please enter your requirement first.');
+        requirementEl.focus();
+        return '';
+      }
+
+      const apiKey = (localStorage.getItem('OPENAI_API_KEY') || '').trim();
+
+      // No key? Use local formatter instantly.
+      if (!apiKey) {
+        const formatted = "```markdown\n" + localFormatter(raw) + "\n```";
+        outputEl.value = formatted;
+        return formatted;
+      }
+
+      // With key: call OpenAI Chat Completions
+      try {
+        convertBtn.disabled = true;
+        convertBtn.textContent = 'Converting...';
+
+        const system = `You are Multi AI Prompt Crafter, a structured prompt-generation assistant. 
+Always output only ONE code block containing:
+# Role
+You are an expert AI assistant skilled in performing the task described.
+
+# Objective
+Rewrite the user's requirement clearly and formally.
+
+# Instructions
+- Understand the requirement deeply
+- Break the problem into logical parts
+- Apply best practices of prompt engineering
+- Ask clarifying questions only if absolutely required
+- Maintain accuracy and professionalism
+
+# Output Format
+Describe exactly how the AI should present the final answer.
+
+# Additional Notes
+Include any optional context if the user provided more details.
+
+Rules:
+- Never change the user's intent.
+- Never refuse to generate the prompt.
+- Do not add extra content unless necessary.
+- Keep the tone clean, structured, and professional.
+- Always wrap the entire output in a single triple-backtick code block with 'markdown' language tag.`;
+
+        const resp = await fetch(OPENAI_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + apiKey
+          },
+          body: JSON.stringify({
+            model: OPENAI_MODEL,
+            messages: [
+              { role: 'system', content: system },
+              { role: 'user', content: raw.startsWith('convert') ? raw : 'convert: ' + raw }
+            ],
+            temperature: 0.2
+          })
+        });
+
+        if (!resp.ok) {
+          const text = await resp.text();
+          throw new Error(text || 'Request failed');
+        }
+        const data = await resp.json();
+        const content = data.choices?.[0]?.message?.content?.trim();
+        const finalText = content || ("```markdown\n" + localFormatter(raw) + "\n```");
+        outputEl.value = finalText;
+        return finalText;
+
+      } catch (err) {
+        console.error(err);
+        const fallback = "```markdown\n" + localFormatter(raw) + "\n```";
+        outputEl.value = fallback + "\n\n<!-- API error; fallback used. -->";
+        return outputEl.value;
+      } finally {
+        convertBtn.disabled = false;
+        convertBtn.textContent = 'Convert to Prompt';
+      }
+    }
+
+    // Copy helper
+    async function copyPrompt() {
+      const text = outputEl.value.trim();
+      if (!text) {
+        // If nothing generated yet, generate first
+        const gen = await generatePrompt();
+        if (!gen) return;
+      }
+      await navigator.clipboard.writeText(outputEl.value);
+    }
+
+    // Open tool after copying
+    async function copyAndOpen(url) {
+      await copyPrompt();
+      window.open(url, '_blank', 'noopener');
+    }
+
+    // Button events
+    convertBtn.addEventListener('click', generatePrompt);
+    document.getElementById('copyBtn').addEventListener('click', () => copyPrompt());
+
+    document.getElementById('claudeBtn').addEventListener('click', () =>
+      copyAndOpen('https://claude.ai/new')
+    );
+    document.getElementById('chatgptBtn').addEventListener('click', () =>
+      copyAndOpen('https://chat.openai.com/')
+    );
+    document.getElementById('geminiBtn').addEventListener('click', () =>
+      copyAndOpen('https://gemini.google.com/app')
+    );
+    document.getElementById('perplexityBtn').addEventListener('click', async () => {
+      // Perplexity supports q= parameter; pass a compact, URL-encoded version.
+      if (!outputEl.value) await generatePrompt();
+      const q = encodeURIComponent(outputEl.value.replace(/```markdown|```/g,'').trim());
+      window.open('https://www.perplexity.ai/?q=' + q, '_blank', 'noopener');
+    });
+
+    // Quality of life: Ctrl/Cmd+Enter to convert
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') generatePrompt();
+    });
+  </script>
+</body>
+</html>
