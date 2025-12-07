@@ -123,7 +123,7 @@
         <div class="logo"></div>
         <div>
           <h1>Prompt Crafter</h1>
-          <div class="subtitle">Transform simple ideas into AI-ready instructions · Created by Vijay Kumar</div>
+          <div class="subtitle">Turn plain requirements into AI-ready commands · Created by Vijay Kumar</div>
         </div>
       </div>
 
@@ -137,27 +137,29 @@
     <div class="card">
       <div class="section-title">Your Requirement</div>
       <textarea id="requirement" placeholder="Type your requirement in plain language, e.g.:
-'Summarise this article in 3 bullet points for a non-technical manager.'"></textarea>
-      <button id="convertBtn" class="btn convert">Convert to AI Instruction</button>
+'Write a short professional email to my boss Brian explaining I am on sick leave today and I have delegated my tasks to Raghav.'"></textarea>
+      <button id="convertBtn" class="btn convert">Convert to AI Command</button>
     </div>
 
     <div style="height:12px"></div>
 
     <!-- OUTPUT CARD -->
     <div class="card">
-      <div class="section-title">AI-Ready Instruction</div>
-      <textarea id="output" class="output" readonly placeholder="The instruction you can paste into ChatGPT, Claude, Gemini, or Perplexity will appear here..."></textarea>
+      <div class="section-title">AI-Ready Command</div>
+      <textarea id="output" class="output" readonly placeholder="Copy this command into ChatGPT, Gemini, Claude, or Perplexity to get the final answer directly..."></textarea>
 
       <div style="height:12px"></div>
       <div class="row">
-        <button class="btn small copy" id="copyBtn">Copy Instruction</button>
+        <button class="btn small copy" id="copyBtn">Copy Command</button>
         <button class="btn small claude" id="claudeBtn">Claude ↗</button>
         <button class="btn small chatgpt" id="chatgptBtn">ChatGPT ↗</button>
         <button class="btn small gemini" id="geminiBtn">Gemini ↗</button>
         <button class="btn small perplexity" id="perplexityBtn">Perplexity ↗</button>
       </div>
 
-      <div class="muted">Click a button to copy the instruction and open the AI tool. The AI will be guided to directly answer, not rewrite your request.</div>
+      <div class="muted">
+        The copied text is a direct command, with no “rewrite this” meta-language, so the AI should directly perform the task.
+      </div>
     </div>
 
     <div style="height:12px"></div>
@@ -167,13 +169,13 @@
       <div class="section-title">How to Use</div>
       <ol class="howto">
         <li>Type your requirement in plain language.</li>
-        <li>Click <b>Convert to AI Instruction</b>.</li>
-        <li>Check the generated instruction (it tells the AI to give the final answer, not another prompt).</li>
-        <li>Click <b>Copy Instruction</b> or open any AI tool and paste.</li>
+        <li>Click <b>Convert to AI Command</b>.</li>
+        <li>Review the generated command.</li>
+        <li>Click <b>Copy Command</b> or open any AI tool and paste.</li>
       </ol>
 
       <div class="footer">
-        Tip: If you save an API key above, generation uses your fine-tuned model. Without a key, a local template will still generate a strong AI instruction.
+        Tip: If you save an API key above, generation uses your fine-tuned model. Without a key, a strong local template is used.
       </div>
     </div>
   </div>
@@ -200,21 +202,17 @@
     function localFormatter(raw) {
       const clean = (raw || '').trim() || '[No requirement provided]';
 
-      return `You are an expert AI assistant.
+      // IMPORTANT: no words like "rewrite", "instruction", "prompt" in what gets copied
+      return `You are an AI assistant. Perform the following task exactly as requested and provide the final result directly to the user:
 
-The user request is:
+${clean}
 
-"""${clean}"""
-
-Your job is to directly fulfill this request.
-
-Requirements:
-- Understand the requirement deeply.
-- Break the problem into logical parts if helpful.
-- Maintain accuracy and professionalism.
-- Do NOT rewrite or improve this request.
-- Do NOT generate another prompt or set of instructions.
-- Respond with the final answer ONLY, as if you are talking directly to the user.`;
+Rules:
+- Produce the final answer directly.
+- Do not rewrite or restate the task.
+- Do not generate explanations about what you are going to do.
+- Do not generate another set of instructions.
+- Respond only with the completed output.`;
     }
 
     async function generatePrompt() {
@@ -237,17 +235,28 @@ Requirements:
         convertBtn.disabled = true;
         convertBtn.textContent = 'Converting...';
 
-        const system = `You are Multi AI Task Crafter.
+        const system = `Your task is to convert the user's raw requirement into a DIRECT EXECUTION COMMAND for another AI model.
 
-Your job is to take a plain-language requirement and turn it into a single, clear instruction that makes another AI model directly perform the task.
-
-Guidelines:
-- Assume the next AI model will only see your output.
-- Instruct it to respond with the final answer only.
-- Explicitly tell it NOT to rewrite the requirement or generate another prompt.
-- Focus on clarity, context, and constraints.
+Critical rules:
+- Do NOT tell the AI to "rewrite" anything.
+- Do NOT include headings or section titles.
+- Do NOT use words like "prompt", "instruction", or "format".
+- Output ONLY a direct command that causes the AI to perform the task immediately.
+- The command must instruct the AI to deliver the final answer directly.
 - Do NOT wrap your output in code fences.
-- Do NOT explain what you are doing; only output the final instruction.`;
+- Do NOT explain yourself; return only the command text.`;
+
+        const userMessage = `User requirement:
+
+"${raw}"
+
+Create a single direct command that an AI model can execute immediately to fulfill this requirement.
+
+Rules for your output:
+- Talk to the AI as if you are giving it an order.
+- Do not describe what the AI should do in meta terms (no "rewrite", "convert", "format", etc.).
+- Do not include headings or markdown titles.
+- Your entire response should be just the command, nothing else.`;
 
         const response = await fetch(OPENAI_API_URL, {
           method: "POST",
@@ -259,19 +268,7 @@ Guidelines:
             model: OPENAI_MODEL,
             messages: [
               { role: "system", content: system },
-              {
-                role: "user",
-                content:
-`User requirement:
-
-"""${raw}"""
-
-Create a single, self-contained instruction for another AI model that will cause it to directly fulfill this requirement.
-
-Important:
-- Tell the AI to produce the final answer, not another prompt.
-- Make the instruction clear enough that the AI can act immediately.`
-              }
+              { role: "user", content: userMessage }
             ],
             temperature: 0.2
           })
@@ -297,7 +294,7 @@ Important:
         return fallback;
       } finally {
         convertBtn.disabled = false;
-        convertBtn.textContent = "Convert to AI Instruction";
+        convertBtn.textContent = "Convert to AI Command";
       }
     }
 
