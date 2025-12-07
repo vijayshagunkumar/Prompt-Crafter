@@ -158,7 +158,7 @@
       </div>
 
       <div class="muted">
-        The copied text is a direct command, with no “rewrite this” meta-language, so the AI should directly perform the task.
+        The copied text is a direct command, with no "rewrite this" meta-language, so the AI should directly perform the task.
       </div>
     </div>
 
@@ -198,12 +198,23 @@
     const outputEl = document.getElementById('output');
     const convertBtn = document.getElementById('convertBtn');
 
-    // Local fallback formatter (no API key)
+    // UPDATED: Local fallback formatter (no API key) - FIXED VERSION
     function localFormatter(raw) {
       const clean = (raw || '').trim() || '[No requirement provided]';
-
-      // IMPORTANT: no words like "rewrite", "instruction", "prompt" in what gets copied
-      return `You are an AI assistant. Perform the following task exactly as requested and provide the final result directly to the user:
+      
+      // Check if it's an email requirement
+      const isEmail = /email|mail|send.*to|message.*to/i.test(clean);
+      
+      if (isEmail) {
+        return `Instruction to AI:
+Rewrite the given email requirement as a prompt for generating the complete email message, without rewriting the requirement itself or interpreting it differently.
+- Input: ${clean}
+- Output: The final email
+- Note: Produce the actual email content exactly as it should be sent, including subject and body. Do not rewrite the requirement; instead, generate the complete email based on it.`;
+      }
+      
+      // Generic fallback for other types of requirements
+      return `You are an AI assistant. Perform the following task exactly as requested and provide the final result directly:
 
 ${clean}
 
@@ -235,14 +246,23 @@ Rules:
         convertBtn.disabled = true;
         convertBtn.textContent = 'Converting...';
 
+        // UPDATED: Better system prompt for API calls
         const system = `Your task is to convert the user's raw requirement into a DIRECT EXECUTION COMMAND for another AI model.
 
+IMPORTANT: If the requirement is about writing an email, use this exact format:
+
+Instruction to AI:
+Rewrite the given email requirement as a prompt for generating the complete email message, without rewriting the requirement itself or interpreting it differently.
+- Input: [USER'S REQUIREMENT]
+- Output: The final email
+- Note: Produce the actual email content exactly as it should be sent, including subject and body. Do not rewrite the requirement; instead, generate the complete email based on it.
+
+For other requirements, create a direct command that tells the AI to perform the task and deliver the final answer.
+
 Critical rules:
-- Do NOT tell the AI to "rewrite" anything.
 - Do NOT include headings or section titles.
-- Do NOT use words like "prompt", "instruction", or "format".
+- Do NOT use words like "prompt", "instruction", or "format" in meta ways.
 - Output ONLY a direct command that causes the AI to perform the task immediately.
-- The command must instruct the AI to deliver the final answer directly.
 - Do NOT wrap your output in code fences.
 - Do NOT explain yourself; return only the command text.`;
 
