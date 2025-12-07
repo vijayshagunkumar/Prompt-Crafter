@@ -184,8 +184,9 @@ Describe how the AI should present the final answer.
 
       const apiKey = localStorage.getItem('OPENAI_API_KEY')?.trim();
 
+      // No API key → fallback formatter (no code fences)
       if (!apiKey) {
-        outputEl.value = "\n" + localFormatter(raw) + "\n```";
+        outputEl.value = localFormatter(raw);
         return outputEl.value;
       }
 
@@ -216,18 +217,22 @@ Always output only ONE code block containing the prompt.`;
         const data = await response.json();
 
         let text = data.choices?.[0]?.message?.content?.trim()
-                 || ("\n" + localFormatter(raw) + "\n```");
+                 || localFormatter(raw);
 
-        // FINAL AGGRESSIVE CLEANING — removes ALL markdown labels
+        // Remove ```markdown / ``` markdown language labels
         text = text.replace(/```[ \t]*[Mm]arkdown/g, "```");
         text = text.replace(/\b[Mm]arkdown\b/g, "");
-        text = text.replace(/```\s*markdown/gi, "```");
 
-        outputEl.value = text;
+        // Strip leading ```... language fence at start of response
+        text = text.replace(/^```[^\n]*\n?/, "");
+        // Strip trailing ``` at end of response
+        text = text.replace(/```$/, "");
+
+        outputEl.value = text.trim();
 
       } catch (err) {
         console.error(err);
-        outputEl.value = "\n" + localFormatter(raw) + "\n```";
+        outputEl.value = localFormatter(raw);
       } finally {
         convertBtn.disabled = false;
         convertBtn.textContent = "Convert to Prompt";
@@ -236,14 +241,12 @@ Always output only ONE code block containing the prompt.`;
 
     document.getElementById("convertBtn").addEventListener("click", generatePrompt);
 
-    // Copy
     async function copyPrompt() {
       if (!outputEl.value) await generatePrompt();
       await navigator.clipboard.writeText(outputEl.value);
     }
     document.getElementById("copyBtn").addEventListener("click", copyPrompt);
 
-    // Open tool
     const openAfterCopy = (url) => async () => {
       await copyPrompt();
       window.open(url, "_blank");
