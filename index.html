@@ -140,7 +140,7 @@
   <script>
     // ---------- Configuration ----------
     const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-    const OPENAI_MODEL = "ft:gpt-3.5-turbo-1106:personal::CkAjxivm"; // 🔥 YOUR FINE-TUNED MODEL
+    const OPENAI_MODEL = "ft:gpt-3.5-turbo-1106:personal::CkAjxivm"; // YOUR MODEL
 
     // Load saved API key
     const apiKeyInput = document.getElementById('apiKey');
@@ -192,7 +192,6 @@ Describe how the AI should present the final answer.
         return outputEl.value;
       }
 
-      // Call OpenAI API
       try {
         convertBtn.disabled = true;
         convertBtn.textContent = 'Converting...';
@@ -219,8 +218,18 @@ Always output only ONE code block containing the prompt.`;
         if (!response.ok) throw new Error(await response.text());
 
         const data = await response.json();
-        outputEl.value = data.choices?.[0]?.message?.content?.trim()
+
+        // -------------------------------
+        // 🔥 FIX: REMOVE ```markdown TAG
+        // -------------------------------
+        let text =
+          data.choices?.[0]?.message?.content?.trim()
           || ("\n" + localFormatter(raw) + "\n```");
+
+        // Remove any ```markdown and replace with ```
+        text = text.replace(/```markdown/g, "```");
+
+        outputEl.value = text;
 
       } catch (err) {
         console.error(err);
@@ -254,4 +263,3 @@ Always output only ONE code block containing the prompt.`;
   </script>
 </body>
 </html>
-
