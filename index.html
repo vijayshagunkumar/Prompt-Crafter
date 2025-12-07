@@ -188,7 +188,7 @@ Describe how the AI should present the final answer.
 
       // No API key → fallback formatter
       if (!apiKey) {
-        outputEl.value = "```markdown\n" + localFormatter(raw) + "\n```";
+        outputEl.value = "\n" + localFormatter(raw) + "\n```";
         return outputEl.value;
       }
 
@@ -220,11 +220,11 @@ Always output only ONE code block containing the prompt.`;
 
         const data = await response.json();
         outputEl.value = data.choices?.[0]?.message?.content?.trim()
-          || ("```markdown\n" + localFormatter(raw) + "\n```");
+          || ("\n" + localFormatter(raw) + "\n```");
 
       } catch (err) {
         console.error(err);
-        outputEl.value = "```markdown\n" + localFormatter(raw) + "\n```";
+        outputEl.value = "\n" + localFormatter(raw) + "\n```";
       } finally {
         convertBtn.disabled = false;
         convertBtn.textContent = "Convert to Prompt";
@@ -254,3 +254,4 @@ Always output only ONE code block containing the prompt.`;
   </script>
 </body>
 </html>
+
