@@ -138,9 +138,8 @@
   </div>
 
   <script>
-    // ---------- Configuration ----------
     const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-    const OPENAI_MODEL = "ft:gpt-3.5-turbo-1106:personal::CkAjxivm"; // 🔥 YOUR FINE-TUNED MODEL
+    const OPENAI_MODEL = "ft:gpt-3.5-turbo-1106:personal::CkAjxivm";
 
     // Load saved API key
     const apiKeyInput = document.getElementById('apiKey');
@@ -156,7 +155,6 @@
     const outputEl = document.getElementById('output');
     const convertBtn = document.getElementById('convertBtn');
 
-    // Local fallback formatter
     function localFormatter(raw) {
       const clean = (raw || '').trim() || '[No requirement provided]';
       return `# Role
@@ -186,13 +184,11 @@ Describe how the AI should present the final answer.
 
       const apiKey = localStorage.getItem('OPENAI_API_KEY')?.trim();
 
-      // No API key → fallback formatter
       if (!apiKey) {
         outputEl.value = "\n" + localFormatter(raw) + "\n```";
         return outputEl.value;
       }
 
-      // Call OpenAI API
       try {
         convertBtn.disabled = true;
         convertBtn.textContent = 'Converting...';
@@ -217,10 +213,17 @@ Always output only ONE code block containing the prompt.`;
         });
 
         if (!response.ok) throw new Error(await response.text());
-
         const data = await response.json();
-        outputEl.value = data.choices?.[0]?.message?.content?.trim()
-          || ("\n" + localFormatter(raw) + "\n```");
+
+        let text = data.choices?.[0]?.message?.content?.trim()
+                 || ("\n" + localFormatter(raw) + "\n```");
+
+        // FINAL AGGRESSIVE CLEANING — removes ALL markdown labels
+        text = text.replace(/```[ \t]*[Mm]arkdown/g, "```");
+        text = text.replace(/\b[Mm]arkdown\b/g, "");
+        text = text.replace(/```\s*markdown/gi, "```");
+
+        outputEl.value = text;
 
       } catch (err) {
         console.error(err);
@@ -233,14 +236,14 @@ Always output only ONE code block containing the prompt.`;
 
     document.getElementById("convertBtn").addEventListener("click", generatePrompt);
 
-    // Copy function
+    // Copy
     async function copyPrompt() {
       if (!outputEl.value) await generatePrompt();
       await navigator.clipboard.writeText(outputEl.value);
     }
     document.getElementById("copyBtn").addEventListener("click", copyPrompt);
 
-    // Open tool after copying
+    // Open tool
     const openAfterCopy = (url) => async () => {
       await copyPrompt();
       window.open(url, "_blank");
@@ -254,5 +257,3 @@ Always output only ONE code block containing the prompt.`;
   </script>
 </body>
 </html>
-
-
