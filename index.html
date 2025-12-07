@@ -18,6 +18,7 @@
       --brand-3:#0284c7;
       --brand-4:#7c3aed;
       --brand-5:#f97316;
+      --brand-6:#10b981;
       --ring:rgba(79,70,229,.25);
       --border:#e5e7eb;
     }
@@ -57,6 +58,7 @@
     }
     .btn:active{transform:translateY(1px)}
     .btn.convert{background:var(--brand);width:100%;margin:14px 0}
+    .btn.convert:disabled{opacity:0.6;cursor:not-allowed;}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .btn.small{padding:10px 14px;font-size:14px;border-radius:10px}
     .btn.copy{background:#111827}
@@ -64,6 +66,7 @@
     .btn.chatgpt{background:var(--brand-3)}
     .btn.gemini{background:var(--brand-4)}
     .btn.perplexity{background:var(--brand-5)}
+    .btn.deepseek{background:var(--brand-6)}
     .btn.export{background:var(--brand-2)}
     .btn.history{background:#6b7280}
     .muted{color:var(--muted);font-size:12px;margin-top:10px}
@@ -107,9 +110,9 @@
       position:relative;display:inline-block;
     }
     .tooltip .tooltiptext{
-      visibility:hidden;width:180px;background-color:#111827;color:#fff;
+      visibility:hidden;width:200px;background-color:#111827;color:#fff;
       text-align:center;border-radius:6px;padding:5px;position:absolute;
-      z-index:1;bottom:125%;left:50%;margin-left:-90px;font-size:12px;
+      z-index:1;bottom:125%;left:50%;margin-left:-100px;font-size:12px;
       opacity:0;transition:opacity 0.3s;
     }
     .tooltip:hover .tooltiptext{visibility:visible;opacity:1}
@@ -123,6 +126,17 @@
       position:fixed;bottom:20px;right:20px;background:var(--brand-2);color:white;
       padding:12px 16px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.1);
       display:none;align-items:center;gap:8px;z-index:1000;
+    }
+    
+    .converted-badge{
+      display:inline-flex;align-items:center;gap:4px;
+      background:#dcfce7;color:#166534;padding:4px 8px;border-radius:6px;
+      font-size:12px;margin-left:8px;
+    }
+    
+    .timer-display{
+      font-size:11px;color:var(--muted);margin-left:8px;
+      display:inline-flex;align-items:center;gap:2px;
     }
   </style>
 </head>
@@ -159,11 +173,18 @@
 
     <!-- INPUT CARD -->
     <div class="card">
-      <div class="section-title"><i class="fas fa-edit"></i> Your Requirement</div>
+      <div class="section-title"><i class="fas fa-edit"></i> Your Requirement
+        <span id="convertedBadge" class="converted-badge" style="display:none">
+          <i class="fas fa-check-circle"></i> Converted
+        </span>
+        <span id="timerDisplay" class="timer-display" style="display:none">
+          <i class="fas fa-clock"></i> <span id="timerValue">60s</span>
+        </span>
+      </div>
       
       <div class="auto-convert">
         <input type="checkbox" id="autoConvert" checked>
-        <label for="autoConvert">Auto-convert as I type (500ms delay)</label>
+        <label for="autoConvert">Auto-convert as I type (60s delay)</label>
       </div>
       
       <textarea id="requirement" placeholder="Type your requirement here..."></textarea>
@@ -202,19 +223,23 @@
         <button class="btn small copy" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
         <div class="tooltip">
           <button class="btn small chatgpt" id="chatgptBtn"><i class="fas fa-paper-plane"></i> ChatGPT</button>
-          <span class="tooltiptext">Auto-pastes prompt in new ChatGPT window</span>
+          <span class="tooltiptext">Opens ChatGPT with prompt ready to paste</span>
         </div>
         <div class="tooltip">
           <button class="btn small claude" id="claudeBtn"><i class="fas fa-paper-plane"></i> Claude</button>
-          <span class="tooltiptext">Auto-pastes prompt in new Claude window</span>
+          <span class="tooltiptext">Opens Claude with prompt ready to paste</span>
         </div>
         <div class="tooltip">
           <button class="btn small gemini" id="geminiBtn"><i class="fas fa-paper-plane"></i> Gemini</button>
-          <span class="tooltiptext">Auto-pastes prompt in new Gemini window</span>
+          <span class="tooltiptext">Opens Gemini with prompt ready to paste</span>
         </div>
         <div class="tooltip">
           <button class="btn small perplexity" id="perplexityBtn"><i class="fas fa-paper-plane"></i> Perplexity</button>
-          <span class="tooltiptext">Auto-pastes prompt in new Perplexity window</span>
+          <span class="tooltiptext">Opens Perplexity with prompt ready to paste</span>
+        </div>
+        <div class="tooltip">
+          <button class="btn small deepseek" id="deepseekBtn"><i class="fas fa-paper-plane"></i> DeepSeek</button>
+          <span class="tooltiptext">Opens DeepSeek with prompt ready to paste</span>
         </div>
         <button class="btn small export" id="exportBtn"><i class="fas fa-download"></i> Export</button>
         <button class="btn small history" id="toggleHistoryBtn"><i class="fas fa-history"></i> History</button>
@@ -231,12 +256,12 @@
       <div class="section-title"><i class="fas fa-info-circle"></i> How to Use</div>
       <ol class="howto">
         <li><b>Type</b> your requirement or click an example</li>
-        <li><b>Convert</b> to generate the structured prompt (auto-converts as you type)</li>
-        <li><b>Click any AI button</b> to open that AI tool with the prompt automatically pasted</li>
-        <li><b>Press Enter</b> in the AI tool to get your answer instantly!</li>
+        <li><b>Auto-converts</b> after 60 seconds (or click Convert)</li>
+        <li><b>Click any AI button</b> - prompt auto-copies and tool opens</li>
+        <li><b>Paste (Ctrl+V)</b> in the AI tool and press Enter!</li>
       </ol>
       <div class="footer">
-        Uses fine-tuned AI model for optimal prompts • v2.0 • <span id="usageCount">0 prompts generated</span>
+        Uses fine-tuned AI model for optimal prompts • v2.1 • <span id="usageCount">0 prompts generated</span>
       </div>
     </div>
   </div>
@@ -247,6 +272,29 @@
     <span id="notificationText">Copied to clipboard!</span>
   </div>
 
+  <!-- CROSS-WINDOW COMMUNICATION POPUP -->
+  <div id="pasteHelper" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.2); z-index:2000; max-width:400px; width:90%;">
+    <div style="text-align:center;">
+      <i class="fas fa-clipboard-check" style="font-size:48px; color:#10b981; margin-bottom:15px;"></i>
+      <h3 style="margin:0 0 10px;">Prompt Ready!</h3>
+      <p style="color:#666; margin-bottom:20px; line-height:1.5;">Your prompt has been copied to clipboard.</p>
+      <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
+        <div style="font-size:13px; color:#666; margin-bottom:5px;">Next steps:</div>
+        <ol style="margin:0; padding-left:20px; font-size:14px;">
+          <li>Go to the opened AI tool tab</li>
+          <li>Click in the input box</li>
+          <li>Press <strong>Ctrl+V</strong> (or Cmd+V on Mac)</li>
+          <li>Press <strong>Enter</strong> to submit</li>
+        </ol>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center;">
+        <button id="closeHelper" style="padding:10px 20px; background:#4f46e5; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;">Got it!</button>
+        <button id="copyAgainBtn" style="padding:10px 20px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:8px; cursor:pointer;">Copy Again</button>
+      </div>
+    </div>
+  </div>
+  <div id="overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1999;"></div>
+
   <script>
     const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
     const OPENAI_MODEL = "ft:gpt-3.5-turbo-1106:personal::CkAjxivm";
@@ -256,6 +304,11 @@
     let autoConvertEnabled = true;
     let debounceTimer;
     let usageCount = 0;
+    let lastConvertedText = '';
+    let isConverted = false;
+    let autoConvertTimer;
+    let autoConvertCountdown = 60; // 60 seconds
+    let countdownInterval;
 
     // Load saved data
     const apiKeyInput = document.getElementById('apiKey');
@@ -327,6 +380,9 @@ System reminder:
     const requirementEl = document.getElementById('requirement');
     const outputEl = document.getElementById('output');
     const convertBtn = document.getElementById('convertBtn');
+    const convertedBadge = document.getElementById('convertedBadge');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerValue = document.getElementById('timerValue');
 
     // Function to get appropriate role
     function getAppropriateRole(text) {
@@ -365,15 +421,51 @@ System reminder:
       return template ? template(role, clean) : PRESETS['default'](role, clean);
     }
 
-    // Auto-convert on typing
-    requirementEl.addEventListener('input', () => {
-      if (autoConvertEnabled) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          if (requirementEl.value.trim()) {
+    // Reset auto-convert timer
+    function resetAutoConvertTimer() {
+      clearTimeout(autoConvertTimer);
+      clearInterval(countdownInterval);
+      
+      if (autoConvertEnabled && requirementEl.value.trim() && !isConverted) {
+        autoConvertCountdown = 60;
+        timerValue.textContent = `${autoConvertCountdown}s`;
+        timerDisplay.style.display = 'inline-flex';
+        
+        countdownInterval = setInterval(() => {
+          autoConvertCountdown--;
+          timerValue.textContent = `${autoConvertCountdown}s`;
+          
+          if (autoConvertCountdown <= 0) {
+            clearInterval(countdownInterval);
+            timerDisplay.style.display = 'none';
+            if (requirementEl.value.trim() && requirementEl.value.trim() !== lastConvertedText) {
+              generatePrompt();
+            }
+          }
+        }, 1000);
+        
+        autoConvertTimer = setTimeout(() => {
+          if (requirementEl.value.trim() && requirementEl.value.trim() !== lastConvertedText) {
             generatePrompt();
           }
-        }, 500);
+        }, 60000); // 60 seconds
+      }
+    }
+
+    // Auto-convert on typing
+    requirementEl.addEventListener('input', () => {
+      // If user changes text after conversion, enable convert button
+      if (isConverted && requirementEl.value.trim() !== lastConvertedText) {
+        isConverted = false;
+        convertBtn.disabled = false;
+        convertedBadge.style.display = 'none';
+        timerDisplay.style.display = 'none';
+        clearTimeout(autoConvertTimer);
+        clearInterval(countdownInterval);
+      }
+      
+      if (autoConvertEnabled) {
+        resetAutoConvertTimer();
       }
       updateStats(requirementEl.value);
     });
@@ -381,6 +473,13 @@ System reminder:
     // Auto-convert toggle
     document.getElementById('autoConvert').addEventListener('change', (e) => {
       autoConvertEnabled = e.target.checked;
+      if (!autoConvertEnabled) {
+        clearTimeout(autoConvertTimer);
+        clearInterval(countdownInterval);
+        timerDisplay.style.display = 'none';
+      } else if (requirementEl.value.trim() && !isConverted) {
+        resetAutoConvertTimer();
+      }
     });
 
     // Preset selection
@@ -389,7 +488,9 @@ System reminder:
         document.querySelectorAll('.preset-option').forEach(o => o.classList.remove('active'));
         option.classList.add('active');
         currentPreset = option.dataset.preset;
-        if (requirementEl.value.trim()) {
+        if (requirementEl.value.trim() && isConverted) {
+          // Regenerate with new preset
+          isConverted = false;
           generatePrompt();
         }
       });
@@ -400,6 +501,9 @@ System reminder:
       btn.addEventListener('click', () => {
         requirementEl.value = btn.dataset.example;
         requirementEl.focus();
+        isConverted = false;
+        convertBtn.disabled = false;
+        convertedBadge.style.display = 'none';
         generatePrompt();
       });
     });
@@ -419,76 +523,97 @@ System reminder:
 
       const apiKey = localStorage.getItem('OPENAI_API_KEY')?.trim();
 
-      // No API key → use local formatter
-      if (!apiKey) {
-        const formatted = localFormatter(raw);
-        outputEl.value = formatted;
-        updateStats(formatted);
-        saveToHistory(raw, formatted);
-        return formatted;
-      }
+      // Show converting state
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+      clearTimeout(autoConvertTimer);
+      clearInterval(countdownInterval);
+      timerDisplay.style.display = 'none';
 
+      let text;
+      
       try {
-        convertBtn.disabled = true;
-        convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
-
-        const system = `You are a prompt generator. Convert the user's requirement into this EXACT format:
-        
+        if (!apiKey) {
+          // Use local formatter
+          text = localFormatter(raw);
+        } else {
+          // Use API
+          const system = `You are a prompt generator. Convert the user's requirement into this EXACT format:
+          
 ${PRESETS[currentPreset]('[ROLE]', '[REQUIREMENT]')}
 
 Replace [ROLE] with appropriate role and [REQUIREMENT] with user's text.`;
 
-        const userMessage = `Requirement: "${raw}"
-        
+          const userMessage = `Requirement: "${raw}"
+          
 Generate prompt in the ${currentPreset} format.`;
 
-        const response = await fetch(OPENAI_API_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + apiKey
-          },
-          body: JSON.stringify({
-            model: OPENAI_MODEL,
-            messages: [
-              { role: "system", content: system },
-              { role: "user", content: userMessage }
-            ],
-            temperature: 0.1,
-            max_tokens: 500
-          })
-        });
+          const response = await fetch(OPENAI_API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + apiKey
+            },
+            body: JSON.stringify({
+              model: OPENAI_MODEL,
+              messages: [
+                { role: "system", content: system },
+                { role: "user", content: userMessage }
+              ],
+              temperature: 0.1,
+              max_tokens: 500
+            })
+          });
 
-        let text;
-        if (response.ok) {
-          const data = await response.json();
-          text = data.choices?.[0]?.message?.content?.trim() || localFormatter(raw);
-        } else {
-          text = localFormatter(raw);
+          if (response.ok) {
+            const data = await response.json();
+            text = data.choices?.[0]?.message?.content?.trim() || localFormatter(raw);
+          } else {
+            text = localFormatter(raw);
+          }
+
+          // Cleanup
+          text = text.replace(/^```[^\n]*\n?/g, '');
+          text = text.replace(/```$/g, '');
+          text = text.trim();
         }
-
-        // Cleanup
-        text = text.replace(/^```[^\n]*\n?/g, '');
-        text = text.replace(/```$/g, '');
-        text = text.trim();
 
         outputEl.value = text;
         updateStats(text);
         saveToHistory(raw, text);
+        
+        // Update state
+        isConverted = true;
+        lastConvertedText = raw;
+        convertBtn.disabled = true;
+        convertedBadge.style.display = 'inline-flex';
+        
         showNotification('Prompt generated successfully');
+        
+        // Reset auto-convert timer if text hasn't changed
+        if (autoConvertEnabled) {
+          resetAutoConvertTimer();
+        }
         
         return text;
 
       } catch (err) {
         console.error(err);
-        const formatted = localFormatter(raw);
-        outputEl.value = formatted;
-        updateStats(formatted);
-        saveToHistory(raw, formatted);
+        text = localFormatter(raw);
+        outputEl.value = text;
+        updateStats(text);
+        saveToHistory(raw, text);
         showNotification('Generated with local template');
-        return formatted;
+        
+        // Still mark as converted
+        isConverted = true;
+        lastConvertedText = raw;
+        convertBtn.disabled = true;
+        convertedBadge.style.display = 'inline-flex';
+        
+        return text;
       } finally {
-        convertBtn.disabled = false;
+        convertBtn.disabled = true;
         convertBtn.innerHTML = '<i class="fas fa-magic"></i> Convert to Prompt';
       }
     }
@@ -501,13 +626,15 @@ Generate prompt in the ${currentPreset} format.`;
         requirement: requirement.substring(0, 100) + (requirement.length > 100 ? '...' : ''),
         prompt: prompt,
         timestamp: new Date().toLocaleTimeString(),
-        date: new Date().toLocaleDateString()
+        date: new Date().toLocaleDateString(),
+        fullRequirement: requirement
       };
       
       history.unshift(item);
       if (history.length > 10) history.pop();
       
       localStorage.setItem('promptHistory', JSON.stringify(history));
+      localStorage.setItem(`fullReq_${item.id}`, requirement);
       loadHistory();
     }
 
@@ -528,6 +655,10 @@ Generate prompt in the ${currentPreset} format.`;
           requirementEl.value = localStorage.getItem(`fullReq_${item.id}`) || item.requirement;
           outputEl.value = item.prompt;
           updateStats(item.prompt);
+          isConverted = true;
+          lastConvertedText = requirementEl.value.trim();
+          convertBtn.disabled = true;
+          convertedBadge.style.display = 'inline-flex';
           showNotification('Prompt loaded from history');
         });
         historyList.appendChild(div);
@@ -551,68 +682,78 @@ Generate prompt in the ${currentPreset} format.`;
       }, 3000);
     }
 
-    // Copy with auto-paste functionality
-    async function copyToClipboardWithPaste() {
-      if (!outputEl.value) await generatePrompt();
-      await navigator.clipboard.writeText(outputEl.value);
-      showNotification('Copied to clipboard!');
-      return outputEl.value;
+    // Show paste helper
+    function showPasteHelper(platform) {
+      const helper = document.getElementById('pasteHelper');
+      const overlay = document.getElementById('overlay');
+      const title = helper.querySelector('h3');
+      title.textContent = `Prompt Ready for ${platform}!`;
+      helper.style.display = 'block';
+      overlay.style.display = 'block';
     }
 
-    // AUTO-PASTE FUNCTIONALITY - THE KEY FEATURE!
-    function createAutoPasteHandler(url, platform) {
+    // Close paste helper
+    document.getElementById('closeHelper').addEventListener('click', () => {
+      document.getElementById('pasteHelper').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    });
+
+    // Copy again button
+    document.getElementById('copyAgainBtn').addEventListener('click', async () => {
+      await copyToClipboard();
+      showNotification('Prompt copied again!');
+    });
+
+    // Copy to clipboard
+    async function copyToClipboard() {
+      if (!outputEl.value) {
+        showNotification('No prompt to copy. Generate one first.');
+        return false;
+      }
+      
+      try {
+        await navigator.clipboard.writeText(outputEl.value);
+        return true;
+      } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = outputEl.value;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          return true;
+        } catch (err2) {
+          document.body.removeChild(textArea);
+          showNotification('Failed to copy. Please copy manually.');
+          return false;
+        }
+      }
+    }
+
+    // AI Tools with improved auto-paste
+    function createAIToolHandler(url, platform) {
       return async function() {
-        const prompt = await copyToClipboardWithPaste();
-        
-        // Create a new window/tab
-        const newWindow = window.open(url, '_blank');
-        
-        // If we can't open a new window, just copy
-        if (!newWindow) {
-          showNotification(`Could not open ${platform}. Prompt copied to clipboard.`);
-          return;
+        // Generate prompt if needed
+        if (!outputEl.value || !isConverted) {
+          await generatePrompt();
         }
         
-        // Try to paste after a short delay
-        setTimeout(() => {
-          try {
-            // This is a hack - we can't directly paste into another domain
-            // But we can show instructions
-            showNotification(`Opened ${platform}. Paste (Ctrl+V) the prompt and press Enter!`);
-            
-            // Store prompt for potential future use
-            sessionStorage.setItem('lastPrompt', prompt);
-            
-            // Alternative: Create a data URL with the prompt pre-filled
-            // Note: This won't work for all sites due to security restrictions
-            const encodedPrompt = encodeURIComponent(prompt);
-            
-            // For ChatGPT specifically, we could try a bookmarklet approach
-            if (platform === 'ChatGPT' && url.includes('chat.openai.com')) {
-              // Create a simple instruction page
-              const instructionPage = `
-                <html>
-                  <head><title>Paste Prompt into ChatGPT</title></head>
-                  <body style="padding:20px;font-family:Arial;">
-                    <h2>Prompt ready for ChatGPT!</h2>
-                    <p>Your prompt has been copied to clipboard.</p>
-                    <p>1. Click in the ChatGPT input box</p>
-                    <p>2. Press <strong>Ctrl+V</strong> (or Cmd+V on Mac)</p>
-                    <p>3. Press <strong>Enter</strong> to submit</p>
-                    <button onclick="window.close()" style="padding:10px 20px;background:#10a37f;color:white;border:none;border-radius:5px;cursor:pointer;">Close</button>
-                  </body>
-                </html>
-              `;
-              
-              const instructionWindow = window.open('', '_blank');
-              instructionWindow.document.write(instructionPage);
-              instructionWindow.document.close();
-            }
-          } catch (e) {
-            console.log('Auto-paste not possible:', e);
-            showNotification(`Opened ${platform}. Please paste the prompt manually.`);
-          }
-        }, 1000);
+        // Copy to clipboard
+        const copied = await copyToClipboard();
+        if (!copied) return;
+        
+        // Show paste helper
+        showPasteHelper(platform);
+        
+        // Open AI tool in new tab
+        try {
+          window.open(url, '_blank');
+        } catch (err) {
+          console.log('Could not open window:', err);
+          showNotification(`${platform} blocked by popup blocker. Please allow popups.`);
+        }
       };
     }
 
@@ -635,20 +776,27 @@ Generate prompt in the ${currentPreset} format.`;
 
     // Event listeners
     document.getElementById("convertBtn").addEventListener("click", generatePrompt);
-    document.getElementById("copyBtn").addEventListener("click", copyToClipboardWithPaste);
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      if (!outputEl.value) await generatePrompt();
+      await copyToClipboard();
+      showNotification('Prompt copied to clipboard!');
+    });
 
-    // AI Tools with auto-paste
+    // AI Tools handlers
     document.getElementById("claudeBtn").addEventListener("click", 
-      createAutoPasteHandler("https://claude.ai/new", "Claude"));
+      createAIToolHandler("https://claude.ai/new", "Claude"));
     
     document.getElementById("chatgptBtn").addEventListener("click", 
-      createAutoPasteHandler("https://chat.openai.com/", "ChatGPT"));
+      createAIToolHandler("https://chat.openai.com/", "ChatGPT"));
     
     document.getElementById("geminiBtn").addEventListener("click", 
-      createAutoPasteHandler("https://gemini.google.com/app", "Gemini"));
+      createAIToolHandler("https://gemini.google.com/app", "Gemini"));
     
     document.getElementById("perplexityBtn").addEventListener("click", 
-      createAutoPasteHandler("https://www.perplexity.ai/", "Perplexity"));
+      createAIToolHandler("https://www.perplexity.ai/", "Perplexity"));
+    
+    document.getElementById("deepseekBtn").addEventListener("click", 
+      createAIToolHandler("https://chat.deepseek.com/", "DeepSeek"));
 
     // Initialize
     loadHistory();
@@ -659,7 +807,7 @@ Generate prompt in the ${currentPreset} format.`;
 
     // Browser compatibility check
     if (!navigator.clipboard) {
-      showNotification('Clipboard API not supported. Some features may be limited.');
+      showNotification('Clipboard API not supported. Using fallback method.');
     }
   </script>
 </body>
