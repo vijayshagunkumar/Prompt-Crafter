@@ -71,14 +71,12 @@
     .btn.export{background:var(--brand-2)}
     .btn.history{background:#6b7280}
     .btn.templates{background:#8b5cf6}
-    .btn.settings{background:#6b7280}
     .muted{color:var(--muted);font-size:12px;margin-top:10px}
     .howto li{margin:6px 0}
     .topbar{
       display:flex;justify-content:space-between;align-items:center;margin:10px 0 18px;
     }
-    .api-box{display:flex;gap:8px;align-items:center;display:none;}
-    .api-box.show{display:flex;}
+    .api-box{display:flex;gap:8px;align-items:center;}
     .api-input{
       width:320px;max-width:60vw;
       border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:#fff;
@@ -87,7 +85,7 @@
     .btn.save{background:#10b981}
     .footer{color:var(--muted);font-size:12px;margin:18px 0;text-align:center}
     
-    /* Examples */
+    /* New Styles */
     .examples{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
     .example-btn{
       background:#f3f4f6;border:1px solid var(--border);border-radius:8px;
@@ -221,37 +219,12 @@
     .empty-state{
       text-align:center;padding:40px 20px;color:var(--muted);
     }
-    
-    /* Settings modal */
-    .settings-modal{
-      display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-      background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;
-      padding:20px;
-    }
-    
-    .settings-modal-content{
-      background:white;border-radius:14px;width:100%;max-width:500px;
-      max-height:90vh;overflow-y:auto;
-    }
-    
-    .settings-section{
-      padding:20px;border-bottom:1px solid var(--border);
-    }
-    
-    .settings-section:last-child{border-bottom:none;}
-    
-    /* PASTE HELPER POPUP */
-    #pasteHelper{display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.2); z-index:2000; max-width:400px; width:90%;}
-    #pasteHelper div{text-align:center;}
-    #pasteHelper i{font-size:48px; color:#10b981; margin-bottom:15px;}
-    #pasteHelper h3{margin:0 0 10px;}
-    #pasteHelper p{color:#666; margin-bottom:20px; line-height:1.5;}
-    #overlay{display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1999;}
   </style>
 </head>
 
 <body>
   <div class="container">
+
     <div class="topbar">
       <div class="header">
         <div class="logo">PC</div>
@@ -261,211 +234,152 @@
         </div>
       </div>
 
-      <div class="actions">
-        <button class="btn small settings" id="settingsBtn"><i class="fas fa-cog"></i> Settings</button>
+      <div class="api-box">
+        <input id="apiKey" class="api-input" type="password" placeholder="Optional: OpenAI API Key" />
+        <button class="btn small save" id="saveKeyBtn">Save</button>
       </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div id="mainContent">
-      <!-- TEMPLATE LIBRARY -->
-      <div class="card">
-        <div class="section-title">
-          <div><i class="fas fa-layer-group"></i> Template Library</div>
-          <div class="actions">
-            <button class="btn small templates" id="newTemplateBtn"><i class="fas fa-plus"></i> New Template</button>
-            <button class="btn small templates" id="toggleTemplatesBtn"><i class="fas fa-eye"></i> Show</button>
-          </div>
-        </div>
-        
-        <div id="templatesPanel" style="display:none">
-          <input type="text" id="templateSearch" class="search-box" placeholder="Search templates...">
-          
-          <div class="template-categories" id="templateCategories">
-            <!-- Categories will be populated by JS -->
-          </div>
-          
-          <div class="templates-grid" id="templatesGrid">
-            <!-- Templates will be populated by JS -->
-          </div>
-          
-          <div id="emptyTemplates" class="empty-state" style="display:none">
-            <i class="fas fa-inbox" style="font-size:48px;margin-bottom:12px;opacity:0.5"></i>
-            <p>No templates found. Create your first template!</p>
-          </div>
+    <!-- TEMPLATE LIBRARY -->
+    <div class="card">
+      <div class="section-title">
+        <div><i class="fas fa-layer-group"></i> Template Library</div>
+        <div class="actions">
+          <button class="btn small templates" id="newTemplateBtn"><i class="fas fa-plus"></i> New Template</button>
+          <button class="btn small templates" id="toggleTemplatesBtn"><i class="fas fa-eye"></i> Show</button>
         </div>
       </div>
-
-      <!-- QUICK EXAMPLES -->
-      <div class="card">
-        <div class="section-title"><i class="fas fa-bolt"></i> Quick Examples</div>
-        <div class="examples" id="examplesContainer">
-          <button class="example-btn" data-example="Write a professional email to my team about the deadline extension">Email</button>
-          <button class="example-btn" data-example="Create a Python function to calculate Fibonacci sequence">Code</button>
-          <button class="example-btn" data-example="Analyze the market trends for electric vehicles in 2024">Analysis</button>
-          <button class="example-btn" data-example="Write a blog post about the benefits of meditation">Blog Post</button>
-          <button class="example-btn" data-example="Design a workout plan for beginners">Workout Plan</button>
-        </div>
-      </div>
-
-      <!-- INPUT CARD -->
-      <div class="card">
-        <div class="section-title"><i class="fas fa-edit"></i> Your Requirement
-          <span id="convertedBadge" class="converted-badge" style="display:none">
-            <i class="fas fa-check-circle"></i> Converted
-          </span>
-          <span id="timerDisplay" class="timer-display" style="display:none">
-            <i class="fas fa-clock"></i> <span id="timerValue">60s</span>
-          </span>
+      
+      <div id="templatesPanel" style="display:none">
+        <input type="text" id="templateSearch" class="search-box" placeholder="Search templates...">
+        
+        <div class="template-categories" id="templateCategories">
+          <!-- Categories will be populated by JS -->
         </div>
         
-        <div class="auto-convert">
-          <input type="checkbox" id="autoConvert" checked>
-          <label for="autoConvert">Auto-convert as I type (60s delay)</label>
+        <div class="templates-grid" id="templatesGrid">
+          <!-- Templates will be populated by JS -->
         </div>
         
-        <textarea id="requirement" placeholder="Type your requirement here..."></textarea>
-        <button id="convertBtn" class="btn convert"><i class="fas fa-magic"></i> Convert to Prompt</button>
-      </div>
-
-      <!-- PRESET SELECTOR -->
-      <div class="card">
-        <div class="section-title"><i class="fas fa-sliders-h"></i> Prompt Style</div>
-        <div class="preset-selector">
-          <div class="preset-option active" data-preset="default">
-            <i class="fas fa-check-circle"></i> Standard
-          </div>
-          <div class="preset-option" data-preset="claude">
-            <i class="fas fa-robot"></i> Claude Optimized
-          </div>
-          <div class="preset-option" data-preset="chatgpt">
-            <i class="fas fa-comment"></i> ChatGPT Optimized
-          </div>
+        <div id="emptyTemplates" class="empty-state" style="display:none">
+          <i class="fas fa-inbox" style="font-size:48px;margin-bottom:12px;opacity:0.5"></i>
+          <p>No templates found. Create your first template!</p>
         </div>
       </div>
+    </div>
 
-      <!-- OUTPUT CARD -->
-      <div class="card">
-        <div class="section-title"><i class="fas fa-code"></i> Generated Prompt</div>
-        <textarea id="output" class="output" readonly placeholder="Your formatted prompt will appear here..."></textarea>
-        
-        <div class="stats">
-          <span id="charCount">0 characters</span> • 
-          <span id="wordCount">0 words</span> • 
-          <span id="lineCount">0 lines</span>
-        </div>
+    <!-- QUICK EXAMPLES -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-bolt"></i> Quick Examples</div>
+      <div class="examples">
+        <button class="example-btn" data-example="Write a professional email to my team about the deadline extension">Email</button>
+        <button class="example-btn" data-example="Create a Python function to calculate Fibonacci sequence">Code</button>
+        <button class="example-btn" data-example="Analyze the market trends for electric vehicles in 2024">Analysis</button>
+        <button class="example-btn" data-example="Write a blog post about the benefits of meditation">Blog Post</button>
+        <button class="example-btn" data-example="Design a workout plan for beginners">Workout Plan</button>
+      </div>
+    </div>
 
-        <div style="height:12px"></div>
-        <div class="row">
-          <button class="btn small copy" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
-          <div class="tooltip">
-            <button class="btn small chatgpt" id="chatgptBtn"><i class="fas fa-paper-plane"></i> ChatGPT</button>
-            <span class="tooltiptext">Opens ChatGPT with prompt ready to paste</span>
-          </div>
-          <div class="tooltip">
-            <button class="btn small claude" id="claudeBtn"><i class="fas fa-paper-plane"></i> Claude</button>
-            <span class="tooltiptext">Opens Claude with prompt ready to paste</span>
-          </div>
-          <div class="tooltip">
-            <button class="btn small gemini" id="geminiBtn"><i class="fas fa-paper-plane"></i> Gemini</button>
-            <span class="tooltiptext">Opens Gemini with prompt ready to paste</span>
-          </div>
-          <div class="tooltip">
-            <button class="btn small perplexity" id="perplexityBtn"><i class="fas fa-paper-plane"></i> Perplexity</button>
-            <span class="tooltiptext">Opens Perplexity with prompt ready to paste</span>
-          </div>
-          <div class="tooltip">
-            <button class="btn small deepseek" id="deepseekBtn"><i class="fas fa-paper-plane"></i> DeepSeek</button>
-            <span class="tooltiptext">Opens DeepSeek with prompt ready to paste</span>
-          </div>
-          <button class="btn small export" id="exportBtn"><i class="fas fa-download"></i> Export</button>
-          <button class="btn small history" id="toggleHistoryBtn"><i class="fas fa-history"></i> History</button>
-          <button class="btn small templates" id="saveAsTemplateBtn"><i class="fas fa-save"></i> Save as Template</button>
+    <!-- INPUT CARD -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-edit"></i> Your Requirement
+        <span id="convertedBadge" class="converted-badge" style="display:none">
+          <i class="fas fa-check-circle"></i> Converted
+        </span>
+        <span id="timerDisplay" class="timer-display" style="display:none">
+          <i class="fas fa-clock"></i> <span id="timerValue">60s</span>
+        </span>
+      </div>
+      
+      <div class="auto-convert">
+        <input type="checkbox" id="autoConvert" checked>
+        <label for="autoConvert">Auto-convert as I type (60s delay)</label>
+      </div>
+      
+      <textarea id="requirement" placeholder="Type your requirement here..."></textarea>
+      <button id="convertBtn" class="btn convert"><i class="fas fa-magic"></i> Convert to Prompt</button>
+    </div>
+
+    <!-- PRESET SELECTOR -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-sliders-h"></i> Prompt Style</div>
+      <div class="preset-selector">
+        <div class="preset-option active" data-preset="default">
+          <i class="fas fa-check-circle"></i> Standard
         </div>
-        
-        <div class="history-panel" id="historyPanel">
-          <div style="font-size:13px;margin-bottom:8px;color:var(--muted)">Recent prompts (click to reuse):</div>
-          <div id="historyList"></div>
+        <div class="preset-option" data-preset="claude">
+          <i class="fas fa-robot"></i> Claude Optimized
+        </div>
+        <div class="preset-option" data-preset="chatgpt">
+          <i class="fas fa-comment"></i> ChatGPT Optimized
         </div>
       </div>
+    </div>
 
-      <!-- HOW TO USE -->
-      <div class="card">
-        <div class="section-title"><i class="fas fa-info-circle"></i> How to Use</div>
-        <ol class="howto">
-          <li><b>Browse templates</b> or type your requirement</li>
-          <li><b>Auto-converts</b> after 60 seconds (or click Convert)</li>
-          <li><b>Click any AI button</b> - prompt auto-copies and tool opens</li>
-          <li><b>Save successful prompts</b> as templates for reuse</li>
-        </ol>
-        <div class="footer">
-          Uses fine-tuned AI model for optimal prompts • v2.3 • <span id="usageCount">0 prompts generated</span>
+    <!-- OUTPUT CARD -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-code"></i> Generated Prompt</div>
+      <textarea id="output" class="output" readonly placeholder="Your formatted prompt will appear here..."></textarea>
+      
+      <div class="stats">
+        <span id="charCount">0 characters</span> • 
+        <span id="wordCount">0 words</span> • 
+        <span id="lineCount">0 lines</span>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="row">
+        <button class="btn small copy" id="copyBtn"><i class="fas fa-copy"></i> Copy</button>
+        <div class="tooltip">
+          <button class="btn small chatgpt" id="chatgptBtn"><i class="fas fa-paper-plane"></i> ChatGPT</button>
+          <span class="tooltiptext">Opens ChatGPT with prompt ready to paste</span>
         </div>
+        <div class="tooltip">
+          <button class="btn small claude" id="claudeBtn"><i class="fas fa-paper-plane"></i> Claude</button>
+          <span class="tooltiptext">Opens Claude with prompt ready to paste</span>
+        </div>
+        <div class="tooltip">
+          <button class="btn small gemini" id="geminiBtn"><i class="fas fa-paper-plane"></i> Gemini</button>
+          <span class="tooltiptext">Opens Gemini with prompt ready to paste</span>
+        </div>
+        <div class="tooltip">
+          <button class="btn small perplexity" id="perplexityBtn"><i class="fas fa-paper-plane"></i> Perplexity</button>
+          <span class="tooltiptext">Opens Perplexity with prompt ready to paste</span>
+        </div>
+        <div class="tooltip">
+          <button class="btn small deepseek" id="deepseekBtn"><i class="fas fa-paper-plane"></i> DeepSeek</button>
+          <span class="tooltiptext">Opens DeepSeek with prompt ready to paste</span>
+        </div>
+        <button class="btn small export" id="exportBtn"><i class="fas fa-download"></i> Export</button>
+        <button class="btn small history" id="toggleHistoryBtn"><i class="fas fa-history"></i> History</button>
+        <button class="btn small templates" id="saveAsTemplateBtn"><i class="fas fa-save"></i> Save as Template</button>
+      </div>
+      
+      <div class="history-panel" id="historyPanel">
+        <div style="font-size:13px;margin-bottom:8px;color:var(--muted)">Recent prompts (click to reuse):</div>
+        <div id="historyList"></div>
+      </div>
+    </div>
+
+    <!-- HOW TO USE -->
+    <div class="card">
+      <div class="section-title"><i class="fas fa-info-circle"></i> How to Use</div>
+      <ol class="howto">
+        <li><b>Browse templates</b> or type your requirement</li>
+        <li><b>Auto-converts</b> after 60 seconds (or click Convert)</li>
+        <li><b>Click any AI button</b> - prompt auto-copies and tool opens</li>
+        <li><b>Save successful prompts</b> as templates for reuse</li>
+      </ol>
+      <div class="footer">
+        Uses fine-tuned AI model for optimal prompts • v2.2 • <span id="usageCount">0 prompts generated</span>
       </div>
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
-  <div class="settings-modal" id="settingsModal">
-    <div class="settings-modal-content">
-      <div class="settings-section">
-        <h3 style="margin:0 0 15px"><i class="fas fa-cog"></i> Settings</h3>
-        
-        <div class="form-group">
-          <label class="form-label">OpenAI API Key (Optional)</label>
-          <div style="display:flex;gap:8px">
-            <input type="password" id="settingsApiKey" class="form-input" placeholder="sk-...">
-            <button class="btn small save" id="settingsSaveKeyBtn">Save</button>
-          </div>
-          <div class="muted">Your API key is stored locally and never sent to our servers.</div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Auto-Convert Delay</label>
-          <select id="autoConvertDelay" class="form-input">
-            <option value="30">30 seconds</option>
-            <option value="60" selected>60 seconds</option>
-            <option value="120">2 minutes</option>
-            <option value="300">5 minutes</option>
-            <option value="0">Off</option>
-          </select>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Default Prompt Style</label>
-          <select id="defaultPreset" class="form-input">
-            <option value="default">Standard</option>
-            <option value="claude">Claude Optimized</option>
-            <option value="chatgpt">ChatGPT Optimized</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class="settings-section">
-        <h4 style="margin:0 0 10px"><i class="fas fa-database"></i> Data Management</h4>
-        
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn small" id="exportDataBtn" style="background:#10b981">
-            <i class="fas fa-download"></i> Export All Data
-          </button>
-          <button class="btn small" id="importDataBtn" style="background:#f59e0b">
-            <i class="fas fa-upload"></i> Import Data
-          </button>
-          <button class="btn small" id="clearDataBtn" style="background:#ef4444">
-            <i class="fas fa-trash"></i> Clear Local Data
-          </button>
-        </div>
-        
-        <div class="muted" style="margin-top:10px">
-          <p>Export your templates and prompts as a backup file.</p>
-          <p>Warning: Clearing data cannot be undone.</p>
-        </div>
-      </div>
-      
-      <div style="padding:20px;text-align:right">
-        <button class="btn" id="closeSettingsBtn" style="background:#6b7280">Close</button>
-      </div>
-    </div>
+  <!-- NOTIFICATION -->
+  <div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <span id="notificationText">Copied to clipboard!</span>
   </div>
 
   <!-- TEMPLATE MODAL -->
@@ -524,18 +438,12 @@
     </div>
   </div>
 
-  <!-- NOTIFICATION -->
-  <div class="notification" id="notification">
-    <i class="fas fa-check-circle"></i>
-    <span id="notificationText">Copied to clipboard!</span>
-  </div>
-
   <!-- PASTE HELPER POPUP -->
-  <div id="pasteHelper" style="display:none;">
-    <div>
-      <i class="fas fa-clipboard-check"></i>
-      <h3>Prompt Ready!</h3>
-      <p>Your prompt has been copied to clipboard.</p>
+  <div id="pasteHelper" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; padding:30px; border-radius:12px; box-shadow:0 10px 40px rgba(0,0,0,0.2); z-index:2000; max-width:400px; width:90%;">
+    <div style="text-align:center;">
+      <i class="fas fa-clipboard-check" style="font-size:48px; color:#10b981; margin-bottom:15px;"></i>
+      <h3 style="margin:0 0 10px;">Prompt Ready!</h3>
+      <p style="color:#666; margin-bottom:20px; line-height:1.5;">Your prompt has been copied to clipboard.</p>
       <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px; text-align:left;">
         <div style="font-size:13px; color:#666; margin-bottom:5px;">Next steps:</div>
         <ol style="margin:0; padding-left:20px; font-size:14px;">
@@ -551,7 +459,7 @@
       </div>
     </div>
   </div>
-  <div id="overlay"></div>
+  <div id="overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1999;"></div>
 
   <script>
     const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
@@ -560,7 +468,6 @@
     // Global variables
     let currentPreset = 'default';
     let autoConvertEnabled = true;
-    let autoConvertDelay = 60000; // 60 seconds
     let debounceTimer;
     let usageCount = 0;
     let lastConvertedText = '';
@@ -590,832 +497,714 @@
         description: 'Write clear, professional emails for business communication',
         category: 'communication',
         tags: ['email', 'professional', 'business'],
-        content: `# Role\nYou are an expert business communicator skilled in writing professional emails.\n\n# Objective\nWrite a professional email about [TOPIC] to [RECIPIENT]\n\n# Context\n- Recipient: [DESCRIBE RECIPIENT]\n- Relationship: [DESCRIBE RELATIONSHIP]\n- Purpose: [EMAIL PURPOSE]\n\n# Instructions\n1. Use professional but friendly tone\n2. Start with appropriate greeting\n3. State purpose clearly in first paragraph\n4. Provide necessary details\n5. Include clear call to action\n6. End with professional closing\n\n# Notes\n- Keep it concise (150-200 words)\n- Use proper email formatting\n- Include subject line\n- Check for tone appropriateness`,
+        content: `# Role
+You are an expert business communicator skilled in writing professional emails.
+
+# Objective
+Write a professional email about [TOPIC] to [RECIPIENT]
+
+# Context
+- Recipient: [DESCRIBE RECIPIENT]
+- Relationship: [DESCRIBE RELATIONSHIP]
+- Purpose: [EMAIL PURPOSE]
+
+# Instructions
+1. Use professional but friendly tone
+2. Start with appropriate greeting
+3. State purpose clearly in first paragraph
+4. Provide necessary details
+5. Include clear call to action
+6. End with professional closing
+
+# Notes
+- Keep it concise (150-200 words)
+- Use proper email formatting
+- Include subject line
+- Check for tone appropriateness`,
         example: 'Write a professional email to my manager requesting a meeting to discuss project timeline adjustments.',
         usageCount: 0,
-        createdAt: Date.now() - 86400000,
+        createdAt: Date.now() - 86400000, // 1 day ago
+        isDefault: true
+      },
+      {
+        id: '2',
+        name: 'Code Review Request',
+        description: 'Request code reviews from team members effectively',
+        category: 'coding',
+        tags: ['code', 'review', 'team'],
+        content: `# Role
+You are an experienced software developer who needs code review.
+
+# Objective
+Request code review for [FEATURE/BUG_FIX] from [TEAM_MEMBER/TEAM]
+
+# Context
+- PR/MR Link: [LINK]
+- Changes: [BRIEF_DESCRIPTION]
+- Testing: [WHAT_WAS_TESTED]
+
+# Instructions
+1. Mention specific files/lines to review
+2. Explain the change briefly
+3. Mention any concerns or trade-offs
+4. Specify what kind of feedback you need
+5. Provide context if needed
+
+# Notes
+- Be specific about what to review
+- Mention deadlines if any
+- Thank the reviewer in advance`,
+        example: 'Request code review for the new user authentication system from the backend team.',
+        usageCount: 0,
+        createdAt: Date.now() - 172800000, // 2 days ago
+        isDefault: true
+      },
+      {
+        id: '3',
+        name: 'Meeting Agenda',
+        description: 'Create structured meeting agendas for productive discussions',
+        category: 'business',
+        tags: ['meeting', 'agenda', 'productivity'],
+        content: `# Role
+You are an efficient meeting organizer.
+
+# Objective
+Create a meeting agenda for [MEETING_TOPIC] with [PARTICIPANTS]
+
+# Context
+- Date/Time: [DATETIME]
+- Duration: [DURATION]
+- Location: [LOCATION/PLATFORM]
+- Participants: [LIST]
+
+# Instructions
+1. Meeting objective/goal
+2. Topics to discuss (with time allocation)
+3. Preparation required
+4. Expected outcomes
+5. Action items tracking
+
+# Notes
+- Allocate time for each topic
+- Include breaks if long meeting
+- Send agenda in advance
+- Assign action items clearly`,
+        example: 'Create a 1-hour team meeting agenda to discuss Q2 project planning with 5 team members.',
+        usageCount: 0,
+        createdAt: Date.now() - 259200000, // 3 days ago
         isDefault: true
       }
     ];
 
-    // Initialize when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeApp();
-    });
-
-    // Initialize the app
-    function initializeApp() {
-      // Load saved data
-      const savedKey = localStorage.getItem('OPENAI_API_KEY');
-      if (savedKey) document.getElementById('apiKey')?.value = savedKey;
-      
-      // Load usage count
-      const savedUsage = localStorage.getItem('promptCrafterUsage');
-      if (savedUsage) {
-        usageCount = parseInt(savedUsage);
-        document.getElementById('usageCount').textContent = `${usageCount} prompts generated`;
-      }
-      
-      // Load auto-convert delay
-      const savedDelay = localStorage.getItem('autoConvertDelay') || '60';
-      autoConvertDelay = parseInt(savedDelay) * 1000;
-      autoConvertCountdown = parseInt(savedDelay);
-      
-      // Load default preset
-      const savedPreset = localStorage.getItem('defaultPreset') || 'default';
-      currentPreset = savedPreset;
-      
-      // Set active preset
-      document.querySelectorAll('.preset-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.preset === savedPreset) {
-          option.classList.add('active');
-        }
-      });
-      
-      // Initialize templates
-      initializeTemplates();
-      
-      // Set up event listeners
-      setupEventListeners();
-      
-      // Show main content
-      document.getElementById('mainContent').style.display = 'block';
-      
-      // Focus on requirement input
-      setTimeout(() => {
-        const requirementEl = document.getElementById('requirement');
-        if (requirementEl) requirementEl.focus();
-      }, 100);
+    // Load saved data
+    const apiKeyInput = document.getElementById('apiKey');
+    const savedKey = localStorage.getItem('OPENAI_API_KEY');
+    if (savedKey) apiKeyInput.value = savedKey;
+    
+    // Load usage count
+    const savedUsage = localStorage.getItem('promptCrafterUsage');
+    if (savedUsage) {
+      usageCount = parseInt(savedUsage);
+      document.getElementById('usageCount').textContent = `${usageCount} prompts generated`;
     }
 
     // Initialize templates
     function initializeTemplates() {
-      // Load templates from localStorage or use defaults
       let templates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
       
-      // Add default templates if empty
+      // Add default templates if none exist
       if (templates.length === 0) {
         templates = DEFAULT_TEMPLATES;
         localStorage.setItem('promptTemplates', JSON.stringify(templates));
       }
       
-      // Populate categories
-      populateCategories();
-      
-      // Render templates
-      renderTemplates();
-      
-      // Set up template search
-      document.getElementById('templateSearch')?.addEventListener('input', function(e) {
-        filterTemplates(e.target.value);
-      });
+      return templates;
     }
 
-    // Populate template categories
-    function populateCategories() {
-      const container = document.getElementById('templateCategories');
-      if (!container) return;
-      
-      container.innerHTML = '';
-      
-      // Add "All" category
-      const allBtn = document.createElement('div');
-      allBtn.className = 'template-category active';
-      allBtn.textContent = 'All';
-      allBtn.dataset.category = 'all';
-      allBtn.addEventListener('click', function() {
-        document.querySelectorAll('.template-category').forEach(cat => cat.classList.remove('active'));
-        this.classList.add('active');
-        renderTemplates();
-      });
-      container.appendChild(allBtn);
-      
-      // Add other categories
-      Object.keys(TEMPLATE_CATEGORIES).forEach(categoryId => {
-        const category = TEMPLATE_CATEGORIES[categoryId];
-        const btn = document.createElement('div');
-        btn.className = 'template-category';
-        btn.textContent = category.name;
-        btn.dataset.category = categoryId;
-        btn.addEventListener('click', function() {
-          document.querySelectorAll('.template-category').forEach(cat => cat.classList.remove('active'));
-          this.classList.add('active');
-          renderTemplates(categoryId);
-        });
-        container.appendChild(btn);
-      });
-    }
+    // Load templates
+    let templates = initializeTemplates();
 
-    // Render templates
-    function renderTemplates(category = 'all') {
-      const container = document.getElementById('templatesGrid');
-      const emptyState = document.getElementById('emptyTemplates');
-      if (!container) return;
-      
-      let templates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
-      
-      // Filter by category if not "all"
-      if (category !== 'all') {
-        templates = templates.filter(t => t.category === category);
-      }
-      
-      // Apply search filter if active
-      const searchTerm = document.getElementById('templateSearch')?.value.toLowerCase() || '';
-      if (searchTerm) {
-        templates = templates.filter(t => 
-          t.name.toLowerCase().includes(searchTerm) ||
-          t.description.toLowerCase().includes(searchTerm) ||
-          t.tags?.some(tag => tag.toLowerCase().includes(searchTerm)) ||
-          t.category.toLowerCase().includes(searchTerm)
-        );
-      }
-      
-      if (templates.length === 0) {
-        container.style.display = 'none';
-        emptyState.style.display = 'block';
-        return;
-      }
-      
-      container.style.display = 'grid';
-      emptyState.style.display = 'none';
-      
-      container.innerHTML = '';
-      
-      templates.forEach(template => {
-        const categoryInfo = TEMPLATE_CATEGORIES[template.category] || TEMPLATE_CATEGORIES.other;
-        
-        const card = document.createElement('div');
-        card.className = 'template-card';
-        card.innerHTML = `
-          <div class="template-icon" style="background:${categoryInfo.color}">
-            <i class="fas ${categoryInfo.icon}"></i>
-          </div>
-          <div class="template-title">${template.name}</div>
-          <div class="template-desc">${template.description}</div>
-          <div class="template-meta">
-            <span>${categoryInfo.name}</span>
-            <span>${template.usageCount || 0} uses</span>
-          </div>
-          <div class="template-actions">
-            <button class="btn small use-template" data-id="${template.id}" style="background:#4f46e5">
-              <i class="fas fa-play"></i> Use
-            </button>
-            <button class="btn small edit-template" data-id="${template.id}" style="background:#6b7280">
-              <i class="fas fa-edit"></i> Edit
-            </button>
-            ${template.isDefault ? '' : `<button class="btn small delete-template" data-id="${template.id}" style="background:#ef4444">
-              <i class="fas fa-trash"></i> Delete
-            </button>`}
-          </div>
-        `;
-        
-        container.appendChild(card);
-      });
-      
-      // Add event listeners for template actions
-      document.querySelectorAll('.use-template').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const templateId = this.dataset.id;
-          useTemplate(templateId);
-        });
-      });
-      
-      document.querySelectorAll('.edit-template').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const templateId = this.dataset.id;
-          editTemplate(templateId);
-        });
-      });
-      
-      document.querySelectorAll('.delete-template').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const templateId = this.dataset.id;
-          deleteTemplate(templateId);
-        });
-      });
-    }
+    // PRESET TEMPLATES
+    const PRESETS = {
+      'default': (role, requirement) => `# Role
+You are an ${role} skilled in performing the task described.
 
-    // Filter templates
-    function filterTemplates(searchTerm) {
-      renderTemplates(document.querySelector('.template-category.active')?.dataset.category || 'all');
-    }
-
-    // Use template
-    function useTemplate(templateId) {
-      const templates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
-      const template = templates.find(t => t.id === templateId);
-      
-      if (template) {
-        // Update usage count
-        template.usageCount = (template.usageCount || 0) + 1;
-        localStorage.setItem('promptTemplates', JSON.stringify(templates));
-        
-        // Load template into requirement field
-        document.getElementById('requirement').value = template.example || template.content;
-        
-        // Trigger conversion
-        generatePrompt();
-        
-        // Show notification
-        showNotification(`Using template: ${template.name}`);
-      }
-    }
-
-    // Edit template
-    function editTemplate(templateId) {
-      const templates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
-      const template = templates.find(t => t.id === templateId);
-      
-      if (template && !template.isDefault) {
-        editingTemplateId = templateId;
-        
-        document.getElementById('modalTitle').textContent = 'Edit Template';
-        document.getElementById('templateName').value = template.name;
-        document.getElementById('templateDescription').value = template.description;
-        document.getElementById('templateContent').value = template.content;
-        document.getElementById('templateCategory').value = template.category;
-        document.getElementById('templateTags').value = template.tags?.join(', ') || '';
-        document.getElementById('templateExample').value = template.example || '';
-        
-        document.getElementById('templateModal').style.display = 'flex';
-      }
-    }
-
-    // Delete template
-    function deleteTemplate(templateId) {
-      if (confirm('Are you sure you want to delete this template?')) {
-        let templates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
-        templates = templates.filter(t => t.id !== templateId);
-        localStorage.setItem('promptTemplates', JSON.stringify(templates));
-        
-        renderTemplates();
-        showNotification('Template deleted');
-      }
-    }
-
-    // Setup event listeners
-    function setupEventListeners() {
-      // Example buttons - FIXED VERSION
-      document.getElementById('examplesContainer').addEventListener('click', function(e) {
-        if (e.target.classList.contains('example-btn')) {
-          const exampleText = e.target.getAttribute('data-example');
-          
-          // Clear any existing auto-convert timer
-          if (countdownInterval) {
-            clearInterval(countdownInterval);
-            document.getElementById('timerDisplay').style.display = 'none';
-          }
-          
-          // Set the requirement
-          document.getElementById('requirement').value = exampleText;
-          
-          // Highlight the clicked button briefly
-          e.target.style.transform = 'scale(0.98)';
-          e.target.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-          setTimeout(() => {
-            e.target.style.transform = '';
-            e.target.style.boxShadow = '';
-          }, 200);
-          
-          // Show notification
-          showNotification(`Loading "${e.target.textContent}" example...`);
-          
-          // Generate prompt after a short delay
-          setTimeout(() => {
-            generatePrompt();
-          }, 500);
-        }
-      });
-
-      // Preset selector
-      document.querySelectorAll('.preset-option').forEach(option => {
-        option.addEventListener('click', function() {
-          document.querySelectorAll('.preset-option').forEach(opt => opt.classList.remove('active'));
-          this.classList.add('active');
-          currentPreset = this.dataset.preset;
-          
-          // Regenerate prompt if there's content
-          if (document.getElementById('requirement').value.trim()) {
-            generatePrompt();
-          }
-        });
-      });
-
-      // Convert button
-      document.getElementById('convertBtn').addEventListener('click', generatePrompt);
-
-      // Auto-convert checkbox
-      document.getElementById('autoConvert').addEventListener('change', function() {
-        autoConvertEnabled = this.checked;
-        if (!autoConvertEnabled && countdownInterval) {
-          clearInterval(countdownInterval);
-          document.getElementById('timerDisplay').style.display = 'none';
-        }
-      });
-
-      // Requirement textarea
-      const requirementEl = document.getElementById('requirement');
-      requirementEl.addEventListener('input', function() {
-        updateStats();
-        
-        if (autoConvertEnabled && this.value.trim()) {
-          startAutoConvertTimer();
-        } else if (countdownInterval) {
-          clearInterval(countdownInterval);
-          document.getElementById('timerDisplay').style.display = 'none';
-        }
-      });
-
-      // Copy button
-      document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
-
-      // AI platform buttons
-      document.getElementById('chatgptBtn').addEventListener('click', () => openAIWithPrompt('chatgpt'));
-      document.getElementById('claudeBtn').addEventListener('click', () => openAIWithPrompt('claude'));
-      document.getElementById('geminiBtn').addEventListener('click', () => openAIWithPrompt('gemini'));
-      document.getElementById('perplexityBtn').addEventListener('click', () => openAIWithPrompt('perplexity'));
-      document.getElementById('deepseekBtn').addEventListener('click', () => openAIWithPrompt('deepseek'));
-
-      // Export button
-      document.getElementById('exportBtn').addEventListener('click', exportPrompt);
-
-      // History button
-      document.getElementById('toggleHistoryBtn').addEventListener('click', toggleHistory);
-
-      // Save as template button
-      document.getElementById('saveAsTemplateBtn').addEventListener('click', saveAsTemplate);
-
-      // Toggle templates button
-      document.getElementById('toggleTemplatesBtn').addEventListener('click', function() {
-        const panel = document.getElementById('templatesPanel');
-        const icon = this.querySelector('i');
-        
-        if (panel.style.display === 'none') {
-          panel.style.display = 'block';
-          icon.className = 'fas fa-eye-slash';
-          this.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
-        } else {
-          panel.style.display = 'none';
-          icon.className = 'fas fa-eye';
-          this.innerHTML = '<i class="fas fa-eye"></i> Show';
-        }
-      });
-
-      // New template button
-      document.getElementById('newTemplateBtn').addEventListener('click', function() {
-        editingTemplateId = null;
-        document.getElementById('modalTitle').textContent = 'New Template';
-        document.getElementById('templateName').value = '';
-        document.getElementById('templateDescription').value = '';
-        document.getElementById('templateContent').value = '';
-        document.getElementById('templateCategory').value = 'communication';
-        document.getElementById('templateTags').value = '';
-        document.getElementById('templateExample').value = '';
-        document.getElementById('templateModal').style.display = 'flex';
-      });
-
-      // Template modal buttons
-      document.getElementById('closeModalBtn').addEventListener('click', closeTemplateModal);
-      document.getElementById('cancelTemplateBtn').addEventListener('click', closeTemplateModal);
-      document.getElementById('saveTemplateBtn').addEventListener('click', saveTemplate);
-
-      // Template tags input
-      document.getElementById('templateTags')?.addEventListener('input', updateTagsPreview);
-
-      // Settings
-      document.getElementById('settingsBtn').addEventListener('click', function() {
-        document.getElementById('settingsModal').style.display = 'flex';
-        loadSettings();
-      });
-
-      document.getElementById('closeSettingsBtn').addEventListener('click', function() {
-        document.getElementById('settingsModal').style.display = 'none';
-      });
-
-      document.getElementById('settingsSaveKeyBtn').addEventListener('click', function() {
-        const apiKey = document.getElementById('settingsApiKey').value.trim();
-        localStorage.setItem('OPENAI_API_KEY', apiKey);
-        showNotification('API key saved');
-      });
-
-      document.getElementById('autoConvertDelay').addEventListener('change', function() {
-        const delay = parseInt(this.value);
-        localStorage.setItem('autoConvertDelay', delay);
-        autoConvertDelay = delay * 1000;
-        autoConvertCountdown = delay;
-        showNotification(`Auto-convert delay set to ${delay} seconds`);
-      });
-
-      document.getElementById('defaultPreset').addEventListener('change', function() {
-        localStorage.setItem('defaultPreset', this.value);
-        showNotification(`Default preset set to ${this.value}`);
-      });
-
-      // Data management
-      document.getElementById('exportDataBtn').addEventListener('click', exportAllData);
-      document.getElementById('importDataBtn').addEventListener('click', importData);
-      document.getElementById('clearDataBtn').addEventListener('click', clearData);
-
-      // Paste helper
-      document.getElementById('closeHelper').addEventListener('click', closePasteHelper);
-      document.getElementById('copyAgainBtn').addEventListener('click', copyToClipboard);
-
-      // Close modals when clicking outside
-      window.addEventListener('click', function(event) {
-        const templateModal = document.getElementById('templateModal');
-        const settingsModal = document.getElementById('settingsModal');
-        
-        if (event.target === templateModal) {
-          closeTemplateModal();
-        }
-        if (event.target === settingsModal) {
-          document.getElementById('settingsModal').style.display = 'none';
-        }
-      });
-    }
-
-    // Generate prompt
-    async function generatePrompt() {
-      const requirement = document.getElementById('requirement').value.trim();
-      if (!requirement) {
-        showNotification('Please enter a requirement first');
-        return;
-      }
-
-      const convertBtn = document.getElementById('convertBtn');
-      const originalText = convertBtn.innerHTML;
-      convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
-      convertBtn.disabled = true;
-
-      try {
-        let prompt = '';
-        
-        // Check if we have an API key
-        const apiKey = localStorage.getItem('OPENAI_API_KEY');
-        
-        if (apiKey && apiKey.startsWith('sk-')) {
-          // Use OpenAI API
-          prompt = await generateWithOpenAI(requirement);
-        } else {
-          // Use local template-based generation
-          prompt = generateLocally(requirement);
-        }
-
-        // Update output
-        document.getElementById('output').value = prompt;
-        updateStats();
-        
-        // Update history
-        addToHistory(requirement, prompt);
-        
-        // Update usage count
-        usageCount++;
-        localStorage.setItem('promptCrafterUsage', usageCount.toString());
-        document.getElementById('usageCount').textContent = `${usageCount} prompts generated`;
-        
-        // Show converted badge
-        document.getElementById('convertedBadge').style.display = 'inline-flex';
-        isConverted = true;
-        lastConvertedText = requirement;
-        
-        showNotification('Prompt generated successfully!');
-        
-      } catch (error) {
-        console.error('Error generating prompt:', error);
-        document.getElementById('output').value = `# Error generating prompt\n\n${error.message || 'Please check your API key or try again.'}\n\n# Manual Template:\n\nRole: AI Assistant\nTask: ${requirement}\n\nInstructions:\n1. Understand the user's requirement\n2. Break it down into clear steps\n3. Provide detailed guidance\n4. Include examples if relevant`;
-        showNotification('Using fallback template. Add OpenAI API key for better results.');
-      } finally {
-        convertBtn.innerHTML = originalText;
-        convertBtn.disabled = false;
-        
-        // Reset auto-convert timer
-        if (autoConvertEnabled) {
-          startAutoConvertTimer();
-        }
-      }
-    }
-
-    // Generate with OpenAI
-    async function generateWithOpenAI(requirement) {
-      const apiKey = localStorage.getItem('OPENAI_API_KEY');
-      if (!apiKey) throw new Error('No API key found');
-
-      const preset = getPresetConfig(currentPreset);
-      
-      const response = await fetch(OPENAI_API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: OPENAI_MODEL,
-          messages: [
-            {
-              role: "system",
-              content: preset.systemPrompt
-            },
-            {
-              role: "user",
-              content: requirement
-            }
-          ],
-          temperature: preset.temperature,
-          max_tokens: 2000
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.choices[0].message.content;
-    }
-
-    // Generate locally
-    function generateLocally(requirement) {
-      const preset = getPresetConfig(currentPreset);
-      
-      // Simple template-based generation
-      return `${preset.templateHeader}
-
-# User Requirement
+# Objective
 ${requirement}
 
-# Structured Prompt
-${preset.structureTemplate.replace('[REQUIREMENT]', requirement)}
+# Context
+(Add relevant background information or constraints here)
 
-# Additional Notes
-- Be specific and detailed in your response
-- Use clear, professional language
-- Break down complex tasks into steps
-- Include examples when helpful`;
-    }
+# Instructions
+1. Understand the requirement deeply
+2. Break the problem into logical parts
+3. Maintain accuracy and professionalism
+4. Provide the final answer directly
 
-    // Get preset configuration
-    function getPresetConfig(presetName) {
-      const presets = {
-        'default': {
-          systemPrompt: "You are a prompt engineering expert. Convert user requirements into well-structured, detailed prompts for AI systems.",
-          templateHeader: "# AI Prompt Template\n\n## Role Definition",
-          structureTemplate: "1. **Role**: Expert AI assistant\n2. **Task**: [REQUIREMENT]\n3. **Context**: Provide necessary background\n4. **Instructions**: Step-by-step guidance\n5. **Constraints**: Any limitations or requirements\n6. **Output Format**: Desired response structure",
-          temperature: 0.7
-        },
-        'claude': {
-          systemPrompt: "You are a prompt engineer specializing in Claude AI. Create prompts optimized for Claude's capabilities.",
-          templateHeader: "# Claude-Optimized Prompt\n\n## Assistant Configuration",
-          structureTemplate: "1. **Role**: Claude AI expert\n2. **Objective**: [REQUIREMENT]\n3. **Thinking Process**: Show your reasoning\n4. **Response Style**: Conversational but precise\n5. **Format Requirements**: Use markdown appropriately\n6. **Claude-specific**: Leverage long context and reasoning",
-          temperature: 0.8
-        },
-        'chatgpt': {
-          systemPrompt: "You are a ChatGPT prompt specialist. Create effective prompts for ChatGPT with clear instructions.",
-          templateHeader: "# ChatGPT Prompt Template\n\n## System Message",
-          structureTemplate: "1. **Role**: ChatGPT specialist\n2. **Goal**: [REQUIREMENT]\n3. **Step-by-step**: Break down the task\n4. **Tone**: Professional and helpful\n5. **Examples**: Include if relevant\n6. **Constraints**: Stay within capabilities",
-          temperature: 0.7
-        }
-      };
+# Notes
+- Do not rewrite or restate the task
+- Do not generate explanations about what you are going to do
+- Do not generate another set of instructions
+- Respond only with the completed output`,
       
-      return presets[presetName] || presets.default;
+      'claude': (role, requirement) => `Human: You are an ${role}. Please perform the following task directly without any preamble or explanation.
+
+Task: ${requirement}
+
+Context: Provide any relevant background or constraints.
+
+Instructions:
+1. Understand the task completely
+2. Execute it precisely
+3. Deliver the final result
+
+Important: Do not rewrite the task. Do not explain your process. Just perform it and provide the output.
+
+Assistant: I'll perform this task directly.`,
+      
+      'chatgpt': (role, requirement) => `System: You are an ${role}. The user will give you a task. Perform it directly without any meta-commentary.
+
+User: ${requirement}
+
+System reminder: 
+- Perform the task exactly as requested
+- No explanations or rewrites
+- Output only the completed result
+- Maintain professional quality`
+    };
+
+    // Initialize
+    document.getElementById('saveKeyBtn').addEventListener('click', () => {
+      localStorage.setItem('OPENAI_API_KEY', apiKeyInput.value.trim());
+      showNotification('API key saved locally');
+    });
+
+    const requirementEl = document.getElementById('requirement');
+    const outputEl = document.getElementById('output');
+    const convertBtn = document.getElementById('convertBtn');
+    const convertedBadge = document.getElementById('convertedBadge');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const timerValue = document.getElementById('timerValue');
+
+    // Function to get appropriate role
+    function getAppropriateRole(text) {
+      const lowerText = text.toLowerCase();
+      if (/email|mail|send.*to|message.*to/i.test(lowerText)) return "expert email writer";
+      if (/write|create|draft|compose|content|blog|article/i.test(lowerText)) return "expert content writer";
+      if (/analyze|evaluate|review|assess|research|market/i.test(lowerText)) return "expert analyst";
+      if (/code|program|script|develop|software|function|python|javascript/i.test(lowerText)) return "expert developer";
+      if (/design|ui|ux|layout|graphic|visual|wireframe/i.test(lowerText)) return "expert designer";
+      if (/business|strategy|plan|proposal|marketing|sales/i.test(lowerText)) return "expert business consultant";
+      if (/translate|language|localize|interpret/i.test(lowerText)) return "expert translator";
+      if (/math|calculate|solve|equation|formula|statistics/i.test(lowerText)) return "expert mathematician";
+      if (/teach|explain|educate|tutor|lesson|guide/i.test(lowerText)) return "expert educator";
+      if (/recipe|cook|food|meal|ingredient/i.test(lowerText)) return "expert chef";
+      if (/workout|exercise|fitness|gym|train/i.test(lowerText)) return "expert fitness trainer";
+      return "expert assistant";
     }
 
     // Update stats
-    function updateStats() {
-      const text = document.getElementById('output').value;
+    function updateStats(text) {
       const charCount = text.length;
-      const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-      const lineCount = text === '' ? 0 : text.split('\n').length;
+      const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
+      const lineCount = text.split('\n').length;
       
       document.getElementById('charCount').textContent = `${charCount} characters`;
       document.getElementById('wordCount').textContent = `${wordCount} words`;
       document.getElementById('lineCount').textContent = `${lineCount} lines`;
     }
 
-    // Start auto-convert timer
-    function startAutoConvertTimer() {
-      if (countdownInterval) {
+    // Local formatter
+    function localFormatter(raw) {
+      const clean = (raw || '').trim() || '[No requirement provided]';
+      const role = getAppropriateRole(clean);
+      
+      const template = PRESETS[currentPreset];
+      return template ? template(role, clean) : PRESETS['default'](role, clean);
+    }
+
+    // Reset auto-convert timer
+    function resetAutoConvertTimer() {
+      clearTimeout(autoConvertTimer);
+      clearInterval(countdownInterval);
+      
+      if (autoConvertEnabled && requirementEl.value.trim() && !isConverted) {
+        autoConvertCountdown = 60;
+        timerValue.textContent = `${autoConvertCountdown}s`;
+        timerDisplay.style.display = 'inline-flex';
+        
+        countdownInterval = setInterval(() => {
+          autoConvertCountdown--;
+          timerValue.textContent = `${autoConvertCountdown}s`;
+          
+          if (autoConvertCountdown <= 0) {
+            clearInterval(countdownInterval);
+            timerDisplay.style.display = 'none';
+            if (requirementEl.value.trim() && requirementEl.value.trim() !== lastConvertedText) {
+              generatePrompt();
+            }
+          }
+        }, 1000);
+        
+        autoConvertTimer = setTimeout(() => {
+          if (requirementEl.value.trim() && requirementEl.value.trim() !== lastConvertedText) {
+            generatePrompt();
+          }
+        }, 60000);
+      }
+    }
+
+    // Auto-convert on typing
+    requirementEl.addEventListener('input', () => {
+      if (isConverted && requirementEl.value.trim() !== lastConvertedText) {
+        isConverted = false;
+        convertBtn.disabled = false;
+        convertedBadge.style.display = 'none';
+        timerDisplay.style.display = 'none';
+        clearTimeout(autoConvertTimer);
         clearInterval(countdownInterval);
       }
       
-      autoConvertCountdown = autoConvertDelay / 1000;
-      document.getElementById('timerDisplay').style.display = 'inline-flex';
-      document.getElementById('timerValue').textContent = `${autoConvertCountdown}s`;
-      
-      countdownInterval = setInterval(() => {
-        autoConvertCountdown--;
-        document.getElementById('timerValue').textContent = `${autoConvertCountdown}s`;
-        
-        if (autoConvertCountdown <= 0) {
-          clearInterval(countdownInterval);
-          document.getElementById('timerDisplay').style.display = 'none';
-          
-          const currentText = document.getElementById('requirement').value.trim();
-          if (currentText && currentText !== lastConvertedText) {
-            generatePrompt();
-          }
+      if (autoConvertEnabled) {
+        resetAutoConvertTimer();
+      }
+      updateStats(requirementEl.value);
+    });
+
+    // Auto-convert toggle
+    document.getElementById('autoConvert').addEventListener('change', (e) => {
+      autoConvertEnabled = e.target.checked;
+      if (!autoConvertEnabled) {
+        clearTimeout(autoConvertTimer);
+        clearInterval(countdownInterval);
+        timerDisplay.style.display = 'none';
+      } else if (requirementEl.value.trim() && !isConverted) {
+        resetAutoConvertTimer();
+      }
+    });
+
+    // Preset selection
+    document.querySelectorAll('.preset-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.preset-option').forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+        currentPreset = option.dataset.preset;
+        if (requirementEl.value.trim() && isConverted) {
+          isConverted = false;
+          generatePrompt();
         }
-      }, 1000);
-    }
-
-    // Copy to clipboard
-    function copyToClipboard() {
-      const output = document.getElementById('output');
-      if (!output.value.trim()) {
-        showNotification('Nothing to copy');
-        return;
-      }
-      
-      navigator.clipboard.writeText(output.value).then(() => {
-        showNotification('Copied to clipboard!');
-        closePasteHelper();
-      }).catch(err => {
-        console.error('Copy failed:', err);
-        showNotification('Copy failed. Please select and copy manually.');
       });
-    }
+    });
 
-    // Open AI with prompt
-    function openAIWithPrompt(platform) {
-      const output = document.getElementById('output');
-      if (!output.value.trim()) {
-        showNotification('Generate a prompt first');
-        return;
-      }
-      
-      // Copy to clipboard
-      navigator.clipboard.writeText(output.value).then(() => {
-        // Open the AI platform
-        const urls = {
-          chatgpt: 'https://chat.openai.com',
-          claude: 'https://claude.ai',
-          gemini: 'https://gemini.google.com',
-          perplexity: 'https://www.perplexity.ai',
-          deepseek: 'https://chat.deepseek.com'
-        };
-        
-        window.open(urls[platform], '_blank');
-        
-        // Show paste helper
-        document.getElementById('pasteHelper').style.display = 'block';
-        document.getElementById('overlay').style.display = 'block';
+    // Examples
+    document.querySelectorAll('.example-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        requirementEl.value = btn.dataset.example;
+        requirementEl.focus();
+        isConverted = false;
+        convertBtn.disabled = false;
+        convertedBadge.style.display = 'none';
+        generatePrompt();
       });
-    }
+    });
 
-    // Close paste helper
-    function closePasteHelper() {
-      document.getElementById('pasteHelper').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-    }
-
-    // Export prompt
-    function exportPrompt() {
-      const prompt = document.getElementById('output').value;
-      if (!prompt.trim()) {
-        showNotification('Nothing to export');
-        return;
+    // Generate prompt
+    async function generatePrompt() {
+      const raw = requirementEl.value.trim();
+      if (!raw) {
+        showNotification('Please enter a requirement first');
+        return '';
       }
+
+      // Track usage
+      usageCount++;
+      localStorage.setItem('promptCrafterUsage', usageCount);
+      document.getElementById('usageCount').textContent = `${usageCount} prompts generated`;
+
+      const apiKey = localStorage.getItem('OPENAI_API_KEY')?.trim();
+
+      // Show converting state
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+      clearTimeout(autoConvertTimer);
+      clearInterval(countdownInterval);
+      timerDisplay.style.display = 'none';
+
+      let text;
       
-      const blob = new Blob([prompt], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `prompt-${Date.now()}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      showNotification('Prompt exported as text file');
+      try {
+        if (!apiKey) {
+          // Use local formatter
+          text = localFormatter(raw);
+        } else {
+          // Use API
+          const system = `You are a prompt generator. Convert the user's requirement into this EXACT format:
+          
+${PRESETS[currentPreset]('[ROLE]', '[REQUIREMENT]')}
+
+Replace [ROLE] with appropriate role and [REQUIREMENT] with user's text.`;
+
+          const userMessage = `Requirement: "${raw}"
+          
+Generate prompt in the ${currentPreset} format.`;
+
+          const response = await fetch(OPENAI_API_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + apiKey
+            },
+            body: JSON.stringify({
+              model: OPENAI_MODEL,
+              messages: [
+                { role: "system", content: system },
+                { role: "user", content: userMessage }
+              ],
+              temperature: 0.1,
+              max_tokens: 500
+            })
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            text = data.choices?.[0]?.message?.content?.trim() || localFormatter(raw);
+          } else {
+            text = localFormatter(raw);
+          }
+
+          // Cleanup
+          text = text.replace(/^```[^\n]*\n?/g, '');
+          text = text.replace(/```$/g, '');
+          text = text.trim();
+        }
+
+        outputEl.value = text;
+        updateStats(text);
+        saveToHistory(raw, text);
+        
+        // Update state
+        isConverted = true;
+        lastConvertedText = raw;
+        convertBtn.disabled = true;
+        convertedBadge.style.display = 'inline-flex';
+        
+        showNotification('Prompt generated successfully');
+        
+        // Reset auto-convert timer if text hasn't changed
+        if (autoConvertEnabled) {
+          resetAutoConvertTimer();
+        }
+        
+        return text;
+
+      } catch (err) {
+        console.error(err);
+        text = localFormatter(raw);
+        outputEl.value = text;
+        updateStats(text);
+        saveToHistory(raw, text);
+        showNotification('Generated with local template');
+        
+        // Still mark as converted
+        isConverted = true;
+        lastConvertedText = raw;
+        convertBtn.disabled = true;
+        convertedBadge.style.display = 'inline-flex';
+        
+        return text;
+      } finally {
+        convertBtn.disabled = true;
+        convertBtn.innerHTML = '<i class="fas fa-magic"></i> Convert to Prompt';
+      }
     }
 
-    // Toggle history panel
-    function toggleHistory() {
-      const panel = document.getElementById('historyPanel');
-      const btn = document.getElementById('toggleHistoryBtn');
+    // Save to history
+    function saveToHistory(requirement, prompt) {
+      const history = JSON.parse(localStorage.getItem('promptHistory') || '[]');
+      const item = {
+        id: Date.now(),
+        requirement: requirement.substring(0, 100) + (requirement.length > 100 ? '...' : ''),
+        prompt: prompt,
+        timestamp: new Date().toLocaleTimeString(),
+        date: new Date().toLocaleDateString(),
+        fullRequirement: requirement
+      };
       
-      if (panel.style.display === 'none') {
-        panel.style.display = 'block';
-        btn.innerHTML = '<i class="fas fa-history"></i> Hide History';
-        loadHistory();
-      } else {
-        panel.style.display = 'none';
-        btn.innerHTML = '<i class="fas fa-history"></i> History';
-      }
+      history.unshift(item);
+      if (history.length > 10) history.pop();
+      
+      localStorage.setItem('promptHistory', JSON.stringify(history));
+      localStorage.setItem(`fullReq_${item.id}`, requirement);
+      loadHistory();
     }
 
     // Load history
     function loadHistory() {
       const history = JSON.parse(localStorage.getItem('promptHistory') || '[]');
-      const container = document.getElementById('historyList');
+      const historyList = document.getElementById('historyList');
+      historyList.innerHTML = '';
       
-      container.innerHTML = '';
-      
-      if (history.length === 0) {
-        container.innerHTML = '<div style="color:var(--muted);font-style:italic;padding:10px;text-align:center;">No history yet</div>';
-        return;
-      }
-      
-      // Show last 10 items
-      history.slice(-10).reverse().forEach((item, index) => {
+      history.forEach(item => {
         const div = document.createElement('div');
         div.className = 'history-item';
-        
-        const truncatedText = item.input.length > 60 ? item.input.substring(0, 60) + '...' : item.input;
-        const date = new Date(item.timestamp).toLocaleDateString();
-        
         div.innerHTML = `
           <div>
-            <strong>${truncatedText}</strong>
-            <div style="font-size:11px;color:var(--muted)">${date}</div>
+            <div style="font-weight:500">${item.requirement}</div>
+            <div style="font-size:11px;color:var(--muted)">${item.date} ${item.timestamp}</div>
           </div>
-          <button class="btn small" style="background:#4f46e5;padding:4px 8px;font-size:11px;" data-index="${history.length - 1 - index}">Use</button>
+          <button class="btn small" style="padding:4px 8px;font-size:11px" onclick="event.stopPropagation();useHistoryItem('${item.id}')">Use</button>
         `;
-        
-        container.appendChild(div);
-      });
-      
-      // Add event listeners to use buttons
-      container.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const index = parseInt(this.dataset.index);
-          const history = JSON.parse(localStorage.getItem('promptHistory') || '[]');
-          const item = history[index];
-          
-          if (item) {
-            document.getElementById('requirement').value = item.input;
-            document.getElementById('output').value = item.output;
-            updateStats();
+        div.addEventListener('click', (e) => {
+          if (!e.target.closest('button')) {
+            requirementEl.value = localStorage.getItem(`fullReq_${item.id}`) || item.requirement;
+            outputEl.value = item.prompt;
+            updateStats(item.prompt);
+            isConverted = true;
+            lastConvertedText = requirementEl.value.trim();
+            convertBtn.disabled = true;
+            convertedBadge.style.display = 'inline-flex';
             showNotification('Prompt loaded from history');
           }
         });
+        historyList.appendChild(div);
       });
     }
 
-    // Add to history
-    function addToHistory(input, output) {
-      let history = JSON.parse(localStorage.getItem('promptHistory') || '[]');
+    // Use history item
+    window.useHistoryItem = function(id) {
+      const history = JSON.parse(localStorage.getItem('promptHistory') || '[]');
+      const item = history.find(h => h.id == id);
+      if (item) {
+        requirementEl.value = localStorage.getItem(`fullReq_${id}`) || item.requirement;
+        generatePrompt();
+      }
+    };
+
+    // Toggle history
+    document.getElementById('toggleHistoryBtn').addEventListener('click', () => {
+      const panel = document.getElementById('historyPanel');
+      panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+      if (panel.style.display === 'block') loadHistory();
+    });
+
+    // TEMPLATE LIBRARY FUNCTIONS
+
+    // Load categories
+    function loadCategories() {
+      const categoriesContainer = document.getElementById('templateCategories');
+      categoriesContainer.innerHTML = '';
       
-      history.push({
-        input,
-        output,
-        timestamp: Date.now(),
-        preset: currentPreset
+      // Add "All" category
+      const allCategory = document.createElement('div');
+      allCategory.className = 'template-category active';
+      allCategory.dataset.category = 'all';
+      allCategory.innerHTML = '<i class="fas fa-th"></i> All';
+      allCategory.addEventListener('click', () => filterTemplates('all'));
+      categoriesContainer.appendChild(allCategory);
+      
+      // Add other categories
+      Object.keys(TEMPLATE_CATEGORIES).forEach(categoryId => {
+        const category = TEMPLATE_CATEGORIES[categoryId];
+        const categoryEl = document.createElement('div');
+        categoryEl.className = 'template-category';
+        categoryEl.dataset.category = categoryId;
+        categoryEl.innerHTML = `<i class="fas ${category.icon}"></i> ${category.name}`;
+        categoryEl.addEventListener('click', () => filterTemplates(categoryId));
+        categoriesContainer.appendChild(categoryEl);
       });
-      
-      // Keep only last 50 items
-      if (history.length > 50) {
-        history = history.slice(-50);
-      }
-      
-      localStorage.setItem('promptHistory', JSON.stringify(history));
-      
-      // Refresh history display if visible
-      if (document.getElementById('historyPanel').style.display === 'block') {
-        loadHistory();
-      }
     }
 
-    // Save as template
-    function saveAsTemplate() {
-      const output = document.getElementById('output').value.trim();
-      const requirement = document.getElementById('requirement').value.trim();
+    // Load templates
+    function loadTemplates(filterCategory = 'all', searchQuery = '') {
+      const templatesGrid = document.getElementById('templatesGrid');
+      const emptyState = document.getElementById('emptyTemplates');
       
-      if (!output || !requirement) {
-        showNotification('Generate a prompt first');
+      templatesGrid.innerHTML = '';
+      
+      let filteredTemplates = templates;
+      
+      // Apply category filter
+      if (filterCategory !== 'all') {
+        filteredTemplates = filteredTemplates.filter(t => t.category === filterCategory);
+      }
+      
+      // Apply search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        filteredTemplates = filteredTemplates.filter(t => 
+          t.name.toLowerCase().includes(query) ||
+          t.description.toLowerCase().includes(query) ||
+          t.tags.some(tag => tag.toLowerCase().includes(query))
+        );
+      }
+      
+      // Show empty state if no templates
+      if (filteredTemplates.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      // Render templates
+      filteredTemplates.forEach(template => {
+        const category = TEMPLATE_CATEGORIES[template.category];
+        const card = document.createElement('div');
+        card.className = 'template-card';
+        card.innerHTML = `
+          <div class="template-icon" style="background:${category.color}">
+            <i class="fas ${category.icon}"></i>
+          </div>
+          <div class="template-title">${template.name}</div>
+          <div class="template-desc">${template.description}</div>
+          <div class="template-meta">
+            <span><i class="fas fa-tag"></i> ${template.tags.slice(0, 2).join(', ')}</span>
+            <span><i class="fas fa-download"></i> ${template.usageCount}</span>
+          </div>
+          <div class="template-actions">
+            <button class="btn small" style="background:${category.color}" onclick="useTemplate('${template.id}')">
+              <i class="fas fa-play"></i> Use
+            </button>
+            <button class="btn small" style="background:#6b7280" onclick="editTemplate('${template.id}')">
+              <i class="fas fa-edit"></i>
+            </button>
+            ${!template.isDefault ? `<button class="btn small" style="background:#ef4444" onclick="deleteTemplate('${template.id}')">
+              <i class="fas fa-trash"></i>
+            </button>` : ''}
+          </div>
+        `;
+        templatesGrid.appendChild(card);
+      });
+    }
+
+    // Filter templates
+    function filterTemplates(category) {
+      // Update active category
+      document.querySelectorAll('.template-category').forEach(cat => {
+        cat.classList.remove('active');
+      });
+      document.querySelector(`.template-category[data-category="${category}"]`).classList.add('active');
+      
+      const searchQuery = document.getElementById('templateSearch').value;
+      loadTemplates(category, searchQuery);
+    }
+
+    // Use template
+    window.useTemplate = function(templateId) {
+      const template = templates.find(t => t.id === templateId);
+      if (template) {
+        // Update usage count
+        template.usageCount = (template.usageCount || 0) + 1;
+        saveTemplates();
+        
+        // Fill requirement with example
+        requirementEl.value = template.example || '';
+        
+        // Generate prompt from template content
+        outputEl.value = template.content;
+        updateStats(template.content);
+        
+        // Update state
+        isConverted = true;
+        lastConvertedText = requirementEl.value.trim();
+        convertBtn.disabled = true;
+        convertedBadge.style.display = 'inline-flex';
+        
+        showNotification(`Using "${template.name}" template`);
+      }
+    };
+
+    // Edit template
+    window.editTemplate = function(templateId) {
+      const template = templates.find(t => t.id === templateId);
+      if (template) {
+        editingTemplateId = templateId;
+        document.getElementById('modalTitle').textContent = 'Edit Template';
+        document.getElementById('templateName').value = template.name;
+        document.getElementById('templateDescription').value = template.description;
+        document.getElementById('templateContent').value = template.content;
+        document.getElementById('templateCategory').value = template.category;
+        document.getElementById('templateTags').value = template.tags.join(', ');
+        document.getElementById('templateExample').value = template.example || '';
+        
+        // Update tags preview
+        updateTagsPreview(template.tags);
+        
+        // Show modal
+        document.getElementById('templateModal').style.display = 'flex';
+      }
+    };
+
+    // Delete template
+    window.deleteTemplate = function(templateId) {
+      if (confirm('Are you sure you want to delete this template?')) {
+        templates = templates.filter(t => t.id !== templateId && t.isDefault);
+        saveTemplates();
+        loadTemplates();
+        showNotification('Template deleted');
+      }
+    };
+
+    // Save templates
+    function saveTemplates() {
+      localStorage.setItem('promptTemplates', JSON.stringify(templates));
+    }
+
+    // New template
+    document.getElementById('newTemplateBtn').addEventListener('click', () => {
+      editingTemplateId = null;
+      document.getElementById('modalTitle').textContent = 'New Template';
+      document.getElementById('templateName').value = '';
+      document.getElementById('templateDescription').value = '';
+      document.getElementById('templateContent').value = outputEl.value || '';
+      document.getElementById('templateCategory').value = 'communication';
+      document.getElementById('templateTags').value = '';
+      document.getElementById('templateExample').value = requirementEl.value || '';
+      document.getElementById('tagsPreview').innerHTML = '';
+      
+      document.getElementById('templateModal').style.display = 'flex';
+    });
+
+    // Save as template from output
+    document.getElementById('saveAsTemplateBtn').addEventListener('click', () => {
+      if (!outputEl.value.trim()) {
+        showNotification('Generate a prompt first before saving as template');
         return;
       }
       
       editingTemplateId = null;
       document.getElementById('modalTitle').textContent = 'Save as Template';
-      document.getElementById('templateName').value = requirement.substring(0, 50) + (requirement.length > 50 ? '...' : '');
-      document.getElementById('templateDescription').value = `Generated from: ${requirement.substring(0, 100)}...`;
-      document.getElementById('templateContent').value = output;
+      document.getElementById('templateName').value = `Prompt ${new Date().toLocaleDateString()}`;
+      document.getElementById('templateDescription').value = 'Custom prompt template';
+      document.getElementById('templateContent').value = outputEl.value;
       document.getElementById('templateCategory').value = 'other';
-      document.getElementById('templateTags').value = 'generated';
-      document.getElementById('templateExample').value = requirement;
+      document.getElementById('templateTags').value = 'custom';
+      document.getElementById('templateExample').value = requirementEl.value || '';
+      document.getElementById('tagsPreview').innerHTML = '<span class="tag">custom</span>';
+      
       document.getElementById('templateModal').style.display = 'flex';
-    }
-
-    // Close template modal
-    function closeTemplateModal() {
-      document.getElementById('templateModal').style.display = 'none';
-      editingTemplateId = null;
-    }
+    });
 
     // Update tags preview
-    function updateTagsPreview() {
-      const tagsInput = document.getElementById('templateTags').value;
-      const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag);
-      const container = document.getElementById('tagsPreview');
-      
-      container.innerHTML = tags.map(tag => 
-        `<span class="tag"><i class="fas fa-tag"></i> ${tag}</span>`
-      ).join('');
+    function updateTagsPreview(tags) {
+      const tagsPreview = document.getElementById('tagsPreview');
+      tagsPreview.innerHTML = '';
+      tags.forEach(tag => {
+        const tagEl = document.createElement('span');
+        tagEl.className = 'tag';
+        tagEl.innerHTML = `<i class="fas fa-tag"></i> ${tag}`;
+        tagsPreview.appendChild(tagEl);
+      });
     }
 
+    // Template tags input
+    document.getElementById('templateTags').addEventListener('input', function() {
+      const tags = this.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+      updateTagsPreview(tags);
+    });
+
     // Save template
-    function saveTemplate() {
+    document.getElementById('saveTemplateBtn').addEventListener('click', () => {
       const name = document.getElementById('templateName').value.trim();
       const description = document.getElementById('templateDescription').value.trim();
       const content = document.getElementById('templateContent').value.trim();
@@ -1428,8 +1217,6 @@ ${preset.structureTemplate.replace('[REQUIREMENT]', requirement)}
         return;
       }
       
-      let templates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
-      
       if (editingTemplateId) {
         // Update existing template
         const index = templates.findIndex(t => t.id === editingTemplateId);
@@ -1441,8 +1228,7 @@ ${preset.structureTemplate.replace('[REQUIREMENT]', requirement)}
             content,
             category,
             tags,
-            example,
-            updatedAt: Date.now()
+            example
           };
         }
       } else {
@@ -1459,114 +1245,47 @@ ${preset.structureTemplate.replace('[REQUIREMENT]', requirement)}
           createdAt: Date.now(),
           isDefault: false
         };
-        
         templates.push(newTemplate);
       }
       
-      localStorage.setItem('promptTemplates', JSON.stringify(templates));
-      closeTemplateModal();
-      renderTemplates();
-      showNotification(editingTemplateId ? 'Template updated' : 'Template saved');
-    }
+      saveTemplates();
+      loadTemplates();
+      document.getElementById('templateModal').style.display = 'none';
+      showNotification(`Template "${name}" saved`);
+    });
 
-    // Load settings
-    function loadSettings() {
-      const savedDelay = localStorage.getItem('autoConvertDelay') || '60';
-      const savedPreset = localStorage.getItem('defaultPreset') || 'default';
-      const savedApiKey = localStorage.getItem('OPENAI_API_KEY') || '';
-      
-      document.getElementById('autoConvertDelay').value = savedDelay;
-      document.getElementById('defaultPreset').value = savedPreset;
-      document.getElementById('settingsApiKey').value = savedApiKey;
-    }
+    // Close template modal
+    document.getElementById('closeModalBtn').addEventListener('click', () => {
+      document.getElementById('templateModal').style.display = 'none';
+    });
 
-    // Export all data
-    function exportAllData() {
-      const data = {
-        templates: JSON.parse(localStorage.getItem('promptTemplates') || '[]'),
-        history: JSON.parse(localStorage.getItem('promptHistory') || '[]'),
-        settings: {
-          apiKey: localStorage.getItem('OPENAI_API_KEY'),
-          usageCount: localStorage.getItem('promptCrafterUsage'),
-          autoConvertDelay: localStorage.getItem('autoConvertDelay'),
-          defaultPreset: localStorage.getItem('defaultPreset')
-        },
-        exportedAt: new Date().toISOString()
-      };
-      
-      const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `prompt-crafter-backup-${Date.now()}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      showNotification('Data exported successfully');
-    }
+    document.getElementById('cancelTemplateBtn').addEventListener('click', () => {
+      document.getElementById('templateModal').style.display = 'none';
+    });
 
-    // Import data
-    function importData() {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json';
+    // Toggle templates panel
+    document.getElementById('toggleTemplatesBtn').addEventListener('click', () => {
+      const panel = document.getElementById('templatesPanel');
+      const btn = document.getElementById('toggleTemplatesBtn');
       
-      input.onchange = function(e) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-        
-        reader.onload = function(event) {
-          try {
-            const data = JSON.parse(event.target.result);
-            
-            if (data.templates) {
-              localStorage.setItem('promptTemplates', JSON.stringify(data.templates));
-            }
-            
-            if (data.history) {
-              localStorage.setItem('promptHistory', JSON.stringify(data.history));
-            }
-            
-            if (data.settings) {
-              if (data.settings.apiKey) {
-                localStorage.setItem('OPENAI_API_KEY', data.settings.apiKey);
-              }
-              if (data.settings.usageCount) {
-                localStorage.setItem('promptCrafterUsage', data.settings.usageCount);
-              }
-              if (data.settings.autoConvertDelay) {
-                localStorage.setItem('autoConvertDelay', data.settings.autoConvertDelay);
-              }
-              if (data.settings.defaultPreset) {
-                localStorage.setItem('defaultPreset', data.settings.defaultPreset);
-              }
-            }
-            
-            showNotification('Data imported successfully');
-            setTimeout(() => location.reload(), 1000);
-          } catch (error) {
-            showNotification('Error importing data: Invalid file format');
-          }
-        };
-        
-        reader.readAsText(file);
-      };
-      
-      input.click();
-    }
-
-    // Clear data
-    function clearData() {
-      if (confirm('This will clear all local data (templates, history, settings). Continue?')) {
-        localStorage.clear();
-        showNotification('All local data cleared');
-        setTimeout(() => location.reload(), 1000);
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide';
+        loadCategories();
+        loadTemplates();
+      } else {
+        panel.style.display = 'none';
+        btn.innerHTML = '<i class="fas fa-eye"></i> Show';
       }
-    }
+    });
 
-    // Show notification
+    // Template search
+    document.getElementById('templateSearch').addEventListener('input', function() {
+      const activeCategory = document.querySelector('.template-category.active').dataset.category;
+      loadTemplates(activeCategory, this.value);
+    });
+
+    // Notification
     function showNotification(message) {
       const notification = document.getElementById('notification');
       document.getElementById('notificationText').textContent = message;
@@ -1574,6 +1293,129 @@ ${preset.structureTemplate.replace('[REQUIREMENT]', requirement)}
       setTimeout(() => {
         notification.style.display = 'none';
       }, 3000);
+    }
+
+    // Show paste helper
+    function showPasteHelper(platform) {
+      const helper = document.getElementById('pasteHelper');
+      const overlay = document.getElementById('overlay');
+      const title = helper.querySelector('h3');
+      title.textContent = `Prompt Ready for ${platform}!`;
+      helper.style.display = 'block';
+      overlay.style.display = 'block';
+    }
+
+    // Close paste helper
+    document.getElementById('closeHelper').addEventListener('click', () => {
+      document.getElementById('pasteHelper').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    });
+
+    // Copy again button
+    document.getElementById('copyAgainBtn').addEventListener('click', async () => {
+      await copyToClipboard();
+      showNotification('Prompt copied again!');
+    });
+
+    // Copy to clipboard
+    async function copyToClipboard() {
+      if (!outputEl.value) {
+        showNotification('No prompt to copy. Generate one first.');
+        return false;
+      }
+      
+      try {
+        await navigator.clipboard.writeText(outputEl.value);
+        return true;
+      } catch (err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = outputEl.value;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          return true;
+        } catch (err2) {
+          document.body.removeChild(textArea);
+          showNotification('Failed to copy. Please copy manually.');
+          return false;
+        }
+      }
+    }
+
+    // AI Tools with improved auto-paste
+    function createAIToolHandler(url, platform) {
+      return async function() {
+        if (!outputEl.value || !isConverted) {
+          await generatePrompt();
+        }
+        
+        const copied = await copyToClipboard();
+        if (!copied) return;
+        
+        showPasteHelper(platform);
+        
+        try {
+          window.open(url, '_blank');
+        } catch (err) {
+          showNotification(`${platform} blocked by popup blocker. Please allow popups.`);
+        }
+      };
+    }
+
+    // Export function
+    document.getElementById('exportBtn').addEventListener('click', async () => {
+      if (!outputEl.value) await generatePrompt();
+      
+      const blob = new Blob([outputEl.value], {type: 'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `prompt-${Date.now()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showNotification('Prompt exported as .txt file');
+    });
+
+    // Event listeners
+    document.getElementById("convertBtn").addEventListener("click", generatePrompt);
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      if (!outputEl.value) await generatePrompt();
+      await copyToClipboard();
+      showNotification('Prompt copied to clipboard!');
+    });
+
+    // AI Tools handlers
+    document.getElementById("claudeBtn").addEventListener("click", 
+      createAIToolHandler("https://claude.ai/new", "Claude"));
+    
+    document.getElementById("chatgptBtn").addEventListener("click", 
+      createAIToolHandler("https://chat.openai.com/", "ChatGPT"));
+    
+    document.getElementById("geminiBtn").addEventListener("click", 
+      createAIToolHandler("https://gemini.google.com/app", "Gemini"));
+    
+    document.getElementById("perplexityBtn").addEventListener("click", 
+      createAIToolHandler("https://www.perplexity.ai/", "Perplexity"));
+    
+    document.getElementById("deepseekBtn").addEventListener("click", 
+      createAIToolHandler("https://chat.deepseek.com/", "DeepSeek"));
+
+    // Initialize
+    loadHistory();
+    updateStats('');
+    
+    // Focus on input
+    requirementEl.focus();
+
+    // Browser compatibility check
+    if (!navigator.clipboard) {
+      showNotification('Clipboard API not supported. Using fallback method.');
     }
   </script>
 </body>
