@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prompt Crafter – Direct Command Mode</title>
+  <title>Prompt Crafter</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -23,9 +23,7 @@
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
+      margin:0;background:var(--bg);color:var(--text);
       font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
     }
     .container{max-width:840px;margin:32px auto;padding:0 20px}
@@ -37,49 +35,23 @@
     h1{font-size:28px;margin:0}
     .subtitle{color:var(--muted);font-size:14px;margin:6px 0 0}
     .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:14px;
+      background:var(--card);border:1px solid var(--border);border-radius:14px;
       box-shadow:0 1px 1px rgba(0,0,0,.02), 0 6px 24px rgba(0,0,0,.04);
       padding:18px 18px;
     }
     .section-title{font-weight:600;margin:2px 0 10px}
     textarea, .output{
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:12px;
-      background:#fff;
-      color:var(--text);
-      padding:14px;
-      font-size:14px;
-      outline:none;
-      resize:vertical;
-      min-height:110px;
+      width:100%;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--text);
+      padding:14px;font-size:14px;outline:none;resize:vertical;min-height:110px;
     }
-    textarea:focus, .output:focus{
-      border-color:var(--brand);
-      box-shadow:0 0 0 4px var(--ring);
-    }
+    textarea:focus, .output:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
     .btn{
-      user-select:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:12px 16px;
-      border-radius:12px;
-      border:0;
-      cursor:pointer;
-      font-weight:600;
-      color:#fff;
+      user-select:none;display:inline-flex;align-items:center;justify-content:center;
+      gap:8px;padding:12px 16px;border-radius:12px;border:0;cursor:pointer;font-weight:600;color:#fff;
       transition:.18s transform ease, .18s opacity ease;
     }
     .btn:active{transform:translateY(1px)}
-    .btn.convert{
-      background:var(--brand);
-      width:100%;
-      margin:14px 0;
-    }
+    .btn.convert{background:var(--brand);width:100%;margin:14px 0}
     .row{display:flex;gap:12px;flex-wrap:wrap}
     .btn.small{padding:10px 14px;font-size:14px;border-radius:10px}
     .btn.copy{background:#111827}
@@ -90,11 +62,15 @@
     .muted{color:var(--muted);font-size:12px;margin-top:10px}
     .howto li{margin:6px 0}
     .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin:10px 0 18px;
+      display:flex;justify-content:space-between;align-items:center;margin:10px 0 18px;
     }
+    .api-box{display:flex;gap:8px;align-items:center;}
+    .api-input{
+      width:320px;max-width:60vw;
+      border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;outline:none;background:#fff;
+    }
+    .api-input:focus{border-color:var(--brand);box-shadow:0 0 0 4px var(--ring)}
+    .btn.save{background:#10b981}
     .footer{color:var(--muted);font-size:12px;margin:18px 0}
   </style>
 </head>
@@ -107,38 +83,40 @@
         <div class="logo"></div>
         <div>
           <h1>Prompt Crafter</h1>
-          <div class="subtitle">Turn plain requirements into AI-ready commands · Direct answer, no re-prompts</div>
+          <div class="subtitle">Transform ideas into structured prompts · Created by Vijay Kumar</div>
         </div>
+      </div>
+
+      <div class="api-box">
+        <input id="apiKey" class="api-input" type="password" placeholder="Optional: OpenAI API Key (stored locally)" />
+        <button class="btn small save" id="saveKeyBtn">Save</button>
       </div>
     </div>
 
     <!-- INPUT CARD -->
     <div class="card">
       <div class="section-title">Your Requirement</div>
-      <textarea id="requirement" placeholder="Example:
-Write a professional email to my boss Brian explaining that I am on sick leave today and that I have delegated all my pending tasks to Raghav."></textarea>
-      <button id="convertBtn" class="btn convert">Convert to AI Command</button>
+      <textarea id="requirement" placeholder="Type your requirement here..."></textarea>
+      <button id="convertBtn" class="btn convert">Convert to Prompt</button>
     </div>
 
     <div style="height:12px"></div>
 
     <!-- OUTPUT CARD -->
     <div class="card">
-      <div class="section-title">AI-Ready Command</div>
-      <textarea id="output" class="output" readonly placeholder="This is what you will paste into ChatGPT, Gemini, Claude, or Perplexity..."></textarea>
+      <div class="section-title">Generated Prompt</div>
+      <textarea id="output" class="output" readonly placeholder="Your formatted prompt will appear here..."></textarea>
 
       <div style="height:12px"></div>
       <div class="row">
-        <button class="btn small copy" id="copyBtn">Copy Command</button>
+        <button class="btn small copy" id="copyBtn">Copy Prompt</button>
         <button class="btn small claude" id="claudeBtn">Claude ↗</button>
         <button class="btn small chatgpt" id="chatgptBtn">ChatGPT ↗</button>
         <button class="btn small gemini" id="geminiBtn">Gemini ↗</button>
         <button class="btn small perplexity" id="perplexityBtn">Perplexity ↗</button>
       </div>
 
-      <div class="muted">
-        The generated text is a direct task command. It does not mention “rewrite”, “prompt”, or “instruction”, so the AI should execute it and return the final answer.
-      </div>
+      <div class="muted">Click a button to copy the prompt and open the AI tool.</div>
     </div>
 
     <div style="height:12px"></div>
@@ -148,67 +126,239 @@ Write a professional email to my boss Brian explaining that I am on sick leave t
       <div class="section-title">How to Use</div>
       <ol class="howto">
         <li>Type your requirement in plain language.</li>
-        <li>Click <b>Convert to AI Command</b>.</li>
-        <li>Click <b>Copy Command</b> and paste into any AI chat.</li>
+        <li>Click <b>Convert to Prompt</b> to generate the structured prompt.</li>
+        <li>Review the formatted prompt in the output section.</li>
+        <li>Click <b>Copy</b> or any AI tool button.</li>
       </ol>
 
       <div class="footer">
-        This version uses only local logic – no API key required, no hidden rewrites.
+        Tip: If you save an API key above, generation uses your fine-tuned model.
       </div>
     </div>
   </div>
 
   <script>
+    const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+    const OPENAI_MODEL = "ft:gpt-3.5-turbo-1106:personal::CkAjxivm";
+
+    // Load saved API key
+    const apiKeyInput = document.getElementById('apiKey');
+    const savedKey = localStorage.getItem('OPENAI_API_KEY');
+    if (savedKey) apiKeyInput.value = savedKey;
+
+    document.getElementById('saveKeyBtn').addEventListener('click', () => {
+      localStorage.setItem('OPENAI_API_KEY', apiKeyInput.value.trim());
+      alert('API key saved locally in your browser.');
+    });
+
     const requirementEl = document.getElementById('requirement');
     const outputEl = document.getElementById('output');
     const convertBtn = document.getElementById('convertBtn');
 
-    function buildCommand(raw) {
-      const clean = (raw || '').trim() || '[No task provided]';
+    // Fixed: Creates proper markdown prompt structure
+    function localFormatter(raw) {
+      const clean = (raw || '').trim() || '[No requirement provided]';
+      
+      // Detect task type for better role assignment
+      let role = "expert assistant";
+      if (/email|mail|send.*to|message.*to/i.test(clean)) {
+        role = "expert email writer";
+      } else if (/write|create|draft|compose/i.test(clean)) {
+        role = "expert content writer";
+      } else if (/analyze|evaluate|review|assess/i.test(clean)) {
+        role = "expert analyst";
+      } else if (/code|program|script|develop/i.test(clean)) {
+        role = "expert developer";
+      }
+      
+      return `# Role
+You are an ${role} skilled in performing the task described.
 
-      // CRITICAL: no “rewrite / requirement / prompt / instruction” words here.
-      return `You are an AI assistant. Perform the following task and respond with the final output only, with no extra commentary:
-
+# Objective
 ${clean}
 
-Rules:
-- Produce the final answer directly.
-- Do not restate or explain the task.
-- Do not generate another prompt or a set of instructions.
-- Do not describe what you are doing.
-- Reply only with the completed result.`;
+# Context
+(Add relevant background information or constraints here)
+
+# Instructions
+1. Understand the requirement deeply
+2. Break the problem into logical parts
+3. Maintain accuracy and professionalism
+4. Provide the final answer directly
+
+# Notes
+- Do not rewrite or restate the task
+- Do not generate explanations about what you are going to do
+- Do not generate another set of instructions
+- Respond only with the completed output`;
     }
 
-    function generateCommand() {
+    async function generatePrompt() {
       const raw = requirementEl.value.trim();
       if (!raw) {
         alert('Please enter your requirement.');
         return '';
       }
-      const cmd = buildCommand(raw);
-      outputEl.value = cmd;
-      return cmd;
+
+      const apiKey = localStorage.getItem('OPENAI_API_KEY')?.trim();
+
+      // No API key → use the fixed local formatter
+      if (!apiKey) {
+        outputEl.value = localFormatter(raw);
+        return outputEl.value;
+      }
+
+      try {
+        convertBtn.disabled = true;
+        convertBtn.textContent = 'Converting...';
+
+        // NUCLEAR OPTION: Force exact markdown structure
+        const system = `YOU MUST OUTPUT THIS EXACT MARKDOWN STRUCTURE WITH THE USER'S REQUIREMENT. NOTHING ELSE.
+
+EXACT OUTPUT FORMAT (COPY THIS VERBATIM):
+
+# Role
+You are an [APPROPRIATE_ROLE] skilled in performing the task described.
+
+# Objective
+[USER'S EXACT REQUIREMENT HERE]
+
+# Context
+(Add relevant background information or constraints here)
+
+# Instructions
+1. Understand the requirement deeply
+2. Break the problem into logical parts
+3. Maintain accuracy and professionalism
+4. Provide the final answer directly
+
+# Notes
+- Do not rewrite or restate the task
+- Do not generate explanations about what you are going to do
+- Do not generate another set of instructions
+- Respond only with the completed output
+
+RULES:
+1. Replace [APPROPRIATE_ROLE] with a suitable role based on the task (expert assistant, email writer, analyst, developer, etc.)
+2. Replace [USER'S EXACT REQUIREMENT HERE] with the user's actual requirement
+3. Keep the Context section placeholder as shown
+4. Do NOT add any text before "# Role"
+5. Do NOT use code fences (\`\`\`)
+6. Do NOT explain what you're doing
+7. Do NOT say "Here is the prompt"
+8. Output ONLY the completed markdown structure`;
+
+        const userMessage = `User requirement: "${raw}"
+
+OUTPUT THIS EXACT MARKDOWN STRUCTURE WITH THE REQUIREMENT INSERTED:
+
+# Role
+You are an ${getAppropriateRole(raw)} skilled in performing the task described.
+
+# Objective
+${raw}
+
+# Context
+(Add relevant background information or constraints here)
+
+# Instructions
+1. Understand the requirement deeply
+2. Break the problem into logical parts
+3. Maintain accuracy and professionalism
+4. Provide the final answer directly
+
+# Notes
+- Do not rewrite or restate the task
+- Do not generate explanations about what you are going to do
+- Do not generate another set of instructions
+- Respond only with the completed output
+
+DO NOT ADD ANYTHING ELSE. OUTPUT ONLY THE ABOVE.`;
+
+        function getAppropriateRole(text) {
+          text = text.toLowerCase();
+          if (/email|mail|send.*to|message.*to/i.test(text)) return "expert email writer";
+          if (/write|create|draft|compose|content/i.test(text)) return "expert content writer";
+          if (/analyze|evaluate|review|assess|research/i.test(text)) return "expert analyst";
+          if (/code|program|script|develop|software/i.test(text)) return "expert developer";
+          if (/design|ui|ux|layout|graphic/i.test(text)) return "expert designer";
+          if (/business|strategy|plan|proposal/i.test(text)) return "expert business consultant";
+          if (/translate|language|localize/i.test(text)) return "expert translator";
+          return "expert assistant";
+        }
+
+        const response = await fetch(OPENAI_API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + apiKey
+          },
+          body: JSON.stringify({
+            model: OPENAI_MODEL,
+            messages: [
+              { role: "system", content: system },
+              { role: "user", content: userMessage }
+            ],
+            temperature: 0.1,
+            max_tokens: 500,
+            top_p: 0.3
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error('API Error:', errorText);
+          throw new Error(errorText);
+        }
+        
+        const data = await response.json();
+
+        let text = data.choices?.[0]?.message?.content?.trim()
+               || localFormatter(raw);
+
+        // Cleanup: Remove any code fences
+        text = text.replace(/^```[^\n]*\n?/g, '');
+        text = text.replace(/```$/g, '');
+        
+        // Ensure it starts with "# Role"
+        if (!text.startsWith('# Role')) {
+          const roleIndex = text.indexOf('# Role');
+          if (roleIndex !== -1) {
+            text = text.substring(roleIndex);
+          } else {
+            text = localFormatter(raw);
+          }
+        }
+
+        outputEl.value = text.trim();
+
+      } catch (err) {
+        console.error('Error in generatePrompt:', err);
+        outputEl.value = localFormatter(raw);
+        alert('Error generating prompt. Using local template instead.');
+      } finally {
+        convertBtn.disabled = false;
+        convertBtn.textContent = "Convert to Prompt";
+      }
     }
 
-    convertBtn.addEventListener('click', generateCommand);
+    document.getElementById("convertBtn").addEventListener("click", generatePrompt);
 
-    async function copyCommand() {
-      if (!outputEl.value) generateCommand();
-      if (!outputEl.value) return;
+    async function copyPrompt() {
+      if (!outputEl.value) await generatePrompt();
       await navigator.clipboard.writeText(outputEl.value);
     }
-
-    document.getElementById('copyBtn').addEventListener('click', copyCommand);
+    document.getElementById("copyBtn").addEventListener("click", copyPrompt);
 
     const openAfterCopy = (url) => async () => {
-      await copyCommand();
+      await copyPrompt();
       window.open(url, "_blank");
     };
 
-    document.getElementById('claudeBtn').addEventListener('click', openAfterCopy("https://claude.ai/new"));
-    document.getElementById('chatgptBtn').addEventListener('click', openAfterCopy("https://chat.openai.com/"));
-    document.getElementById('geminiBtn').addEventListener('click', openAfterCopy("https://gemini.google.com/app"));
-    document.getElementById('perplexityBtn').addEventListener('click', openAfterCopy("https://www.perplexity.ai/"));
+    document.getElementById("claudeBtn").addEventListener("click", openAfterCopy("https://claude.ai/new"));
+    document.getElementById("chatgptBtn").addEventListener("click", openAfterCopy("https://chat.openai.com/"));
+    document.getElementById("geminiBtn").addEventListener("click", openAfterCopy("https://gemini.google.com/app"));
+    document.getElementById("perplexityBtn").addEventListener("click", openAfterCopy("https://www.perplexity.ai/"));
   </script>
 </body>
 </html>
